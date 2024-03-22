@@ -1,19 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useDebugValue } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import emailIcon from "../assets/Mail.svg";
 import passwordIcon from "../assets/Password.svg";
 import googleIcon from "../assets/Google.svg";
 import { date, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { BASE_URL } from "../helpers/urls";
+import { ToastContainer } from "react-toastify";
+import { notifyInvalidCredentials, notifySuccessLogin } from "../helpers/toastify";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { getHeaders } from "../helpers/getHeaders";
+import { setUser } from "../state/slices/UserStateSlice";
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   // Define validation schema using Zod
   const schema = z.object({
     email: z.string().email(),
     password: z.string().min(1, "Password cannot be empty"),
   });
-
   // Useform components
   const {
     register,
@@ -23,8 +32,32 @@ function LoginPage() {
     resolver: zodResolver(schema), // Use zodResolver to integrate Zod schema with React Hook Form
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const googleAuth = () => {
+    // Opening the google authentication page
+    window.open(`${BASE_URL}/auth/google/callback`, "_self");
+  };
+
+  const handleLogin = async (data) => {
+    try {
+      // Login request 
+      const response = await axios.post(`${BASE_URL}/user/login`, data);
+      // setting the access token in the localstorage
+      localStorage.setItem("token", response.data.accessToken);
+
+      // Fetch user info using the token
+      const userResponse = await axios.get(`${BASE_URL}/user/get`,{headers:getHeaders()});
+
+      // Update user state with fetched user info
+      dispatch(setUser(userResponse.data));
+      // Navigate to the home page
+      navigate("/");
+
+    } catch (err) {
+      console.log(err);
+      if(err.response.status == 401){
+        notifyInvalidCredentials()
+      }
+    }
   };
 
   return (
@@ -43,7 +76,7 @@ function LoginPage() {
         <div className="flex flex-col justify-center items-center w-full pt-5 ">
           <form
             className="flex flex-col justify-center items-center"
-            onSubmit={handleSubmit((data) => onSubmit(data))}
+            onSubmit={handleSubmit((data) => handleLogin(data))}
           >
             <div className=" my-2 flex relative items-center">
               <img
@@ -97,6 +130,17 @@ function LoginPage() {
             >
               Log in
             </button>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              theme="light"
+            />
           </form>
           {/* Signup link */}
           <p className="text-gray-500 font-sans pt-4 md:text-md text-sm">
@@ -113,7 +157,10 @@ function LoginPage() {
           </div>
           {/* Login with google button */}
           <div className="flex w-full h-[40px] md:mt-8 mt-10 items-center justify-center">
-            <button className="bg-[#f5f5f5] hover:bg-[#eeeeee] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg">
+            <button
+              className="bg-[#f5f5f5] hover:bg-[#eeeeee] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg"
+              onClick={() => googleAuth()}
+            >
               <img
                 src={googleIcon}
                 alt="google-img"

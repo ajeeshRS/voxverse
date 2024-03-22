@@ -7,6 +7,13 @@ import mailIcon from "../assets/Mail.svg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import axios from "axios";
+import { BASE_URL } from "../helpers/urls";
+import { ToastContainer } from "react-toastify";
+import {
+  notifyAccountCreation,
+  notifyEmailExistError,
+} from "../helpers/toastify";
 
 function SignupPage() {
   // Define validation schema using Zod
@@ -30,6 +37,7 @@ function SignupPage() {
     handleSubmit,
     register,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema), // Use zodResolver to integrate Zod schema with React Hook Form
@@ -37,10 +45,27 @@ function SignupPage() {
 
   const password = watch("password");
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/user/signup`, data);
+
+      if (response.status === 201) {
+        notifyAccountCreation();
+      }
+      reset();
+    } catch (error) {
+      if (error.response.status === 400) {
+        notifyEmailExistError();
+      }
+    }
   };
 
+  const googleAuth = () => {
+		window.open(
+			`${BASE_URL}/auth/google/callback`,
+			"_self"
+		);
+	};
   return (
     <div className="bg-[#F5F9E9] w-full h-[100vh] flex justify-center items-center">
       <div className="bg-white shadow-lg w-3/4 md:w-2/4  md:h-[85%] h-[65%]  rounded-lg flex flex-col justify-start items-center  ">
@@ -141,10 +166,21 @@ function SignupPage() {
             >
               Sign up
             </button>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              theme="light"
+            />
           </form>
 
           {/* Login link */}
-          <p className="text-gray-500 font-sans pt-2 text-md">
+          <p className="text-gray-500 font-sans pt-4 md:text-md text-sm">
             Already have an account ?{" "}
             <span className=" font-medium text-[#262626]">
               <Link to={"/login"}>Log in</Link>
@@ -160,7 +196,7 @@ function SignupPage() {
 
           {/* Sign up with google button */}
           <div className="flex w-full h-[40px] md:mt-8 mt-5 items-center justify-center">
-            <button className="bg-[#f5f5f5] hover:bg-[#eeeeee] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg">
+            <button className="bg-[#f5f5f5] hover:bg-[rgb(238,238,238)] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg" onClick={()=>googleAuth()}>
               <img
                 src={googleIcon}
                 alt="google-img"

@@ -1,19 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchSvg from "../assets/Search.svg";
 import Hamburger from "../assets/Sort.svg";
 import article from "../assets/Order_fill.svg";
 import login from "../assets/Sign_in_squre_fill.svg";
 import userAdd from "../assets/User_add_alt_fill.svg";
 import group from "../assets/Group.svg";
-
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggle } from "../state/slices/ToggleSlice";
+import { BASE_URL } from "../helpers/urls";
+import { setUser } from "../state/slices/UserStateSlice";
+import axios from "axios";
+import { getHeaders } from "../helpers/getHeaders";
+
 function NavBar() {
+  const isClicked = useSelector((state) => state.toggleMenu.value);
+  const user = useSelector((state) => state.userState.user);
+  const dispatch = useDispatch();
 
-  const isClicked = useSelector((state)=>state.toggleMenu.value)
+ const fetchUser =async()=>{
+  try {
+    // Fetch user with token
+    const tokenResponse = await axios.get(`${BASE_URL}/user/get`, {
+      headers: getHeaders(),
+    });
 
-  const dispatch = useDispatch()
+    dispatch(setUser(tokenResponse.data));
+  } catch (error) {
+    console.log("Error fetching user with token:", error);
+  } 
+ }
+
+ useEffect(()=>{
+  fetchUser()
+ },[])
 
   return (
     // Navbar
@@ -54,11 +74,22 @@ function NavBar() {
           />
 
           <div className="flex justify-around items-center md:w-48 h-20 mx-4 ">
-            <button className="w-24 h-10 bg-black text-white rounded-full  hover:bg-[#262626]  transition shadow-md  duration-500 ease-in-out md:block hidden ">
-              <Link to={'/login'}>
-              Log in
-              </Link>
-            </button>
+            {Object.keys(user).length !== 0 ? (
+              <button
+                className="w-24 h-10 bg-black text-white rounded-full  hover:bg-[#262626]  transition shadow-md  duration-500 ease-in-out md:block hidden "
+                onClick={() => {
+                  localStorage.clear();
+                  window.open(`${BASE_URL}/auth/logout`);
+                  dispatch(setUser({}));
+                }}
+              >
+                Log out
+              </button>
+            ) : (
+              <button className="w-24 h-10 bg-black text-white rounded-full  hover:bg-[#262626]  transition shadow-md  duration-500 ease-in-out md:block hidden ">
+                <Link to={"/login"}>Log in</Link>
+              </button>
+            )}
           </div>
         </div>
       </div>
