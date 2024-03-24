@@ -87,7 +87,7 @@ function LoginPage() {
               <input
                 type="text"
                 {...register("email")}
-                className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-10 w-[240px] "
+                className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-10 w-[240px]  pr-5"
                 placeholder="Email"
               />
             </div>
@@ -106,7 +106,7 @@ function LoginPage() {
               <input
                 type="password"
                 {...register("password")}
-                className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-10 w-[240px]"
+                className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-10 w-[240px] pr-5"
                 placeholder="Password"
               />
             </div>

@@ -13,6 +13,7 @@ import { getHeaders } from "./helpers/getHeaders";
 import PasswordResetPage from "./pages/PasswordResetPage";
 import VerifyOtpPage from "./pages/VerifyOtpPage";
 import NewPasswordPage from "./pages/NewPasswordPage";
+import NewPostPage from "./pages/NewPostPage";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
@@ -51,6 +52,8 @@ function App() {
           <Route path="/reset-password" element={<NewPasswordPage />} />
         </>
       )}
+
+      <Route path="/new-post" element={<NewPostPage/>} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

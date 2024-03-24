@@ -56,9 +56,15 @@ function NavBar() {
             <p className="px-1 font-medium hover:text-black transition duration-300 cursor-pointer">
               <Link to="/articles">Articles</Link>
             </p>
-            <p className="px-1 font-medium hover:text-black transition duration-300 cursor-pointer">
+            {Object.keys(user).length !== 0 ?
+
+            <p className="px-1 font-medium hover:text-black transition duration-300 cursor-pointer pr-6">
+              <Link to="/new-post">Write</Link>
+            </p>:<p className="px-1 font-medium hover:text-black transition duration-300 cursor-pointer">
               <Link to="/signup">Be a writer</Link>
             </p>
+
+            }
           </div>
         </div>
         <div className="flex md:justify-between justify-around items-center  h-20 md:relative">
@@ -69,7 +75,7 @@ function NavBar() {
           />
           <input
             type="text"
-            className="w-50 bg-[#f5f5f5] h-10 rounded-full focus:outline-none pl-9 md:block hidden"
+            className="w-50 bg-[#f5f5f5] h-10 rounded-full focus:outline-none pl-9 md:block hidden pr-5"
             placeholder="Search..."
           />
 
@@ -109,10 +115,17 @@ function NavBar() {
             <img src={group} alt="about-logo" className="pr-5" />
             <Link to="/about">About us</Link>
           </li>
+          { Object.keys(user).length !== 0 ?
+
           <li className="py-2 w-full list-none text-white text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
             <img src={login} alt="login-logo" className="pr-5" />
-            <Link to="/log">Log in</Link>
+            <Link to="/login">Log out</Link>
+          </li>: <li className="py-2 w-full list-none text-white text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
+            <img src={login} alt="login-logo" className="pr-5" />
+            <Link to="/login">Log in</Link>
           </li>
+
+          }
         </div>
       )}
     </nav>

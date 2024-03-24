@@ -93,4 +93,64 @@ const getUserInfo = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, userLogin, getUserInfo };
+const newBlog = asyncHandler(async (req, res) => {
+  try {
+    const { title, content, tags } = req.body;
+    const image = req.file;
+    const user = req.user;
+    console.log(user);
+    const data = await pool.query(
+      `INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      [
+        user.email,
+        title,
+        content,
+        tags,
+        image.filename,
+        image.path,
+        image.destination,
+      ]
+    );
+
+    if (data.rowCount > 0) {
+      res.status(200).json("Blog added");
+    } else {
+      res.status(400).json("Error in saving blog");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("some internal error occured!");
+  }
+});
+
+const newDraft = asyncHandler(async (req, res) => {
+  try {
+    const { title, content, tags } = req.body;
+    const image = req.file;
+    const user = req.user;
+    console.log(user);
+    const data = await pool.query(
+      `INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      [
+        user.email,
+        title,
+        content,
+        tags,
+        image.filename,
+        image.path,
+        image.destination,
+      ]
+    );
+
+    if (data.rowCount > 0) {
+      res.status(200).json("Draft saved");
+    } else {
+      res.status(400).json("Error in saving the draft");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Some internal error occured");
+  }
+}); 
+
+module.exports = { registerUser, userLogin, getUserInfo, newBlog, newDraft };

@@ -106,7 +106,7 @@ const resendOtp = asyncHandler(async (req, res) => {
     const otp = generateOtp();
 
     // send mail
-    sendEmail("ajeeshrs569@gmail.com", otp);
+    sendEmail(email, otp);
     res.status(200).json("OTP has resent successfully");
 
     // storing email and otp in db
