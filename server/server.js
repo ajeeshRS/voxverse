@@ -16,6 +16,7 @@ require("./config/passport-setup");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// cors middleware options
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -33,12 +34,19 @@ app.use(
     saveUninitialized: true,
   })
 );
-
+// initialising passportjs
 app.use(passport.initialize());
 app.use(passport.session());
+// using error handler middleware
 app.use(errorHandler);
+
+// use this route for file uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// use /user prefix for all userRoutes
 app.use("/user", userRoutes);
+
+// use /auth prefix for all userRoutes
 app.use("/auth", authRoutes);
 
 // passportjs
@@ -52,6 +60,7 @@ pool.connect((err) => {
   }
 });
 
+// server listening
 app.listen(port, () => {
   console.log(`Server running on port : ${port}`);
 });

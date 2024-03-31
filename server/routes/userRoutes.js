@@ -5,6 +5,8 @@ const {
   getUserInfo,
   newBlog,
   newDraft,
+  getLatestBlogs,
+  getAllBlogs,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -25,9 +27,15 @@ const upload = multer({ storage: storage });
 // Controller functions for handling single file upload
 const uploadSingle = upload.single("image");
 
+// signup route
 router.post("/signup", registerUser);
+
+// login route
 router.post("/login", userLogin);
+
+// get user details route
 router.get("/get", validateToken, getUserInfo);
+
 router.post(
   "/new-blog",
   validateToken,
@@ -64,8 +72,15 @@ router.post(
       // Continue to the next middleware
       next();
     });
-  },
+  } ,
   newDraft
 );
+
+// get latest blogs route
+router.get("/get/latest-blogs",getLatestBlogs)
+
+// get the all blogs route
+router.get("/get/all-blogs",getAllBlogs)
+
 
 module.exports = router;

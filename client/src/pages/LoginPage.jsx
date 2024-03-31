@@ -1,14 +1,14 @@
-import React, { useDebugValue } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import emailIcon from "../assets/Mail.svg";
 import passwordIcon from "../assets/Password.svg";
 import googleIcon from "../assets/Google.svg";
-import { date, z } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BASE_URL } from "../helpers/urls";
 import { ToastContainer } from "react-toastify";
-import { notifyInvalidCredentials, notifySuccessLogin } from "../helpers/toastify";
+import { notifyInvalidCredentials } from "../helpers/toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getHeaders } from "../helpers/getHeaders";

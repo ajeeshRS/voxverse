@@ -1,9 +1,11 @@
 const pool = require("../config/db");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+
 // Function to check email existence
 const checkEmailExistence = async (email) => {
   try {
+    // query
     const query = "SELECT COUNT(*) FROM users WHERE email = $1";
     const data = await pool.query(query, [email]);
     const count = parseInt(data.rows[0].count);
@@ -63,6 +65,10 @@ const sendEmail = (email, otp) => {
     console.log(error);
   }
 };
+
+
+
+
 
 // Export modules
 module.exports = { checkEmailExistence, generateOtp,sendEmail };

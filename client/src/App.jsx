@@ -14,9 +14,25 @@ import PasswordResetPage from "./pages/PasswordResetPage";
 import VerifyOtpPage from "./pages/VerifyOtpPage";
 import NewPasswordPage from "./pages/NewPasswordPage";
 import NewPostPage from "./pages/NewPostPage";
+import AllArticles from "./components/AllArticles";
+import ViewArticle from "./pages/ViewArticle";
+import { setAllBlogs } from "./state/slices/AllBlogSlice";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
+
+
+  useEffect(()=>{
+    const fetchAllArticles = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/user/get/all-blogs`);
+        dispatch(setAllBlogs(response.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAllArticles()
+  },[])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,6 +70,8 @@ function App() {
       )}
 
       <Route path="/new-post" element={<NewPostPage/>} />
+      <Route path="/articles" element={<AllArticles/>} />
+      <Route path="/articles/:name/:id" element={<ViewArticle/>} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

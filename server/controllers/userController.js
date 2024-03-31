@@ -41,6 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+// user login
 const userLogin = asyncHandler(async (req, res) => {
   try {
     // checking user inputs
@@ -93,16 +94,25 @@ const getUserInfo = asyncHandler(async (req, res) => {
   }
 });
 
+// creating new blog
 const newBlog = asyncHandler(async (req, res) => {
   try {
+    // getting the details from the req.body
     const { title, content, tags } = req.body;
+
+    // getting the image from the req.file
     const image = req.file;
+
+    // getting the user from the req.user
     const user = req.user;
-    console.log(user);
+
+    // console.log(user);
+
+    // creating  new blog
     const data = await pool.query(
       `INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
       [
-        user.email,
+        user.username,
         title,
         content,
         tags,
@@ -112,23 +122,35 @@ const newBlog = asyncHandler(async (req, res) => {
       ]
     );
 
+    // if it return any rows then the blog is added
     if (data.rowCount > 0) {
       res.status(200).json("Blog added");
+      // else return an error message with status code
     } else {
       res.status(400).json("Error in saving blog");
     }
   } catch (error) {
+    // send error message and status code on any other errors
     console.log(error);
     res.status(500).json("some internal error occured!");
   }
 });
 
+// creating draft
 const newDraft = asyncHandler(async (req, res) => {
   try {
+    // getting the details from the req.body
     const { title, content, tags } = req.body;
+
+    // getting image from the req.file
     const image = req.file;
+
+    // getting user form the req.user
     const user = req.user;
+
     console.log(user);
+
+    // creating draft
     const data = await pool.query(
       `INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
       [
@@ -142,15 +164,64 @@ const newDraft = asyncHandler(async (req, res) => {
       ]
     );
 
+    // if it return any rows then the blog is added
     if (data.rowCount > 0) {
       res.status(200).json("Draft saved");
     } else {
+      // else return an error message with status code
+
       res.status(400).json("Error in saving the draft");
     }
   } catch (err) {
     console.log(err);
+    // send error message and status code on any other errors
+
     res.status(500).json("Some internal error occured");
   }
-}); 
+});
 
-module.exports = { registerUser, userLogin, getUserInfo, newBlog, newDraft };
+// fetching latest 3 blogs from the db
+const getLatestBlogs = asyncHandler(async (req, res) => {
+  try {
+    // query
+    const query = "SELECT * FROM blogs ORDER BY id DESC LIMIT 3;";
+    // fetching
+    const data = await pool.query(query);
+    // if it returns any row then respond with the result with status code
+    if (data.rowCount > 0) {
+      res.status(200).json(data.rows);
+    }
+  } catch (err) {
+    // if any other error occurs then respond with status 500 and error message
+    console.log(err);
+    res.status(500).json("Some internal error occured");
+  }
+});
+
+// fetching all blogs from the db
+const getAllBlogs = asyncHandler(async (req, res) => {
+  try {
+    // query
+    const query = "SELECT * FROM blogs;";
+    // fetching
+    const data = await pool.query(query);
+    // if it returns any rows then respond with result and status code
+    if (data.rowCount > 0) {
+      res.status(200).json(data.rows);
+    }
+  } catch (err) {
+    console.log(err);
+    // if any other error occurs then respond with status 500 and error message
+    res.status(500).json("Some internal error occured");
+  }
+});
+
+module.exports = {
+  registerUser,
+  userLogin,
+  getUserInfo,
+  newBlog,
+  newDraft,
+  getLatestBlogs,
+  getAllBlogs,
+};
