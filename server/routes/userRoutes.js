@@ -7,6 +7,7 @@ const {
   newDraft,
   getLatestBlogs,
   getAllBlogs,
+  sendFeedback,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -81,6 +82,9 @@ router.get("/get/latest-blogs",getLatestBlogs)
 
 // get the all blogs route
 router.get("/get/all-blogs",getAllBlogs)
+
+// send feedback route
+router.post("/send-feedback",sendFeedback)
 
 
 module.exports = router;

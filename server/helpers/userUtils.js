@@ -66,9 +66,48 @@ const sendEmail = (email, otp) => {
   }
 };
 
+// function to send feedback
+const sendFeedbackMail = (message) => {
+  try {
+    // Create a transporter using SMTP transport
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "me.ajeesh7979@gmail.com",
+        pass: process.env.APP_SECRET,
+      },
+      secure: false,
+    });
 
+    // Email data
+    const mailOptions = {
+      from: "me.ajeesh7979@gmail.com",
+      to: "ajeeshrs569@gmail.com",
+      subject: "Feedback message",
+      text: message,
+      html: `
+        <h1>Feedback message</h1>
+        <p>${message}</p>
+    `,
+    };
 
-
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Export modules
-module.exports = { checkEmailExistence, generateOtp,sendEmail };
+module.exports = {
+  checkEmailExistence,
+  generateOtp,
+  sendEmail,
+  sendFeedbackMail,
+};

@@ -82,7 +82,7 @@ const notifyOtpResent = (message) => {
   });
 };
 
-const notifyOtpVerified= (message) => {
+const notifyOtpVerified = (message) => {
   toast.success(message ? message : "OTP verified.", {
     position: "top-center",
     autoClose: 3000,
@@ -94,7 +94,7 @@ const notifyOtpVerified= (message) => {
     theme: "light",
   });
 };
-const notifyOtpVerifyError= (message) => {
+const notifyOtpVerifyError = (message) => {
   toast.error(message ? message : "Invalid OTP.", {
     position: "top-center",
     autoClose: 3000,
@@ -107,7 +107,7 @@ const notifyOtpVerifyError= (message) => {
   });
 };
 
-const notifyPasswordUpdation= (message) => {
+const notifyPasswordUpdation = (message) => {
   toast.success(message ? message : "Password updated.", {
     position: "top-center",
     autoClose: 3000,
@@ -119,7 +119,7 @@ const notifyPasswordUpdation= (message) => {
     theme: "light",
   });
 };
-const notifyPasswordUpdationErr= (message) => {
+const notifyPasswordUpdationErr = (message) => {
   toast.error(message ? message : "Error occured in updating the password .", {
     position: "top-center",
     autoClose: 3000,
@@ -132,7 +132,7 @@ const notifyPasswordUpdationErr= (message) => {
   });
 };
 
-const notifyInvalidCredentials= () => {
+const notifyInvalidCredentials = () => {
   toast.error("Invalid credentials ", {
     position: "top-center",
     autoClose: 3000,
@@ -145,7 +145,7 @@ const notifyInvalidCredentials= () => {
   });
 };
 
-const notifyBlogCreation= () => {
+const notifyBlogCreation = () => {
   toast.success("Published ", {
     position: "top-center",
     autoClose: 3000,
@@ -158,8 +158,21 @@ const notifyBlogCreation= () => {
   });
 };
 
-const notifyBlogDraftCreation= () => {
+const notifyBlogDraftCreation = () => {
   toast.success("Draft saved ", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+
+const notifyFeedbackSend = (message) => {
+  toast.success(message ? message : "Feedback has been sent.", {
     position: "top-center",
     autoClose: 3000,
     hideProgressBar: true,
@@ -184,5 +197,6 @@ export {
   notifyPasswordUpdationErr,
   notifyInvalidCredentials,
   notifyBlogCreation,
-  notifyBlogDraftCreation
+  notifyBlogDraftCreation,
+  notifyFeedbackSend
 };

@@ -1,7 +1,10 @@
 const pool = require("../config/db");
 const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
-const { checkEmailExistence } = require("../helpers/userUtils");
+const {
+  checkEmailExistence,
+  sendFeedbackMail,
+} = require("../helpers/userUtils");
 const jwt = require("jsonwebtoken");
 
 // Creating new user
@@ -216,6 +219,23 @@ const getAllBlogs = asyncHandler(async (req, res) => {
   }
 });
 
+// send feedback
+const sendFeedback = asyncHandler(async (req, res) => {
+  try {
+    // Extracting feedback from the req.body
+    const message = req.body.feedbackInput;
+
+    // sending mail to the admin
+    sendFeedbackMail(message);
+    // on success respond with status code and message
+    res.status(200).json("Feedback has been sent !");
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with status code and error message
+    res.status(500).json("Some internal error occured");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -224,4 +244,5 @@ module.exports = {
   newDraft,
   getLatestBlogs,
   getAllBlogs,
+  sendFeedback,
 };
