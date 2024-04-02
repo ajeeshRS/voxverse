@@ -8,6 +8,9 @@ const {
   getLatestBlogs,
   getAllBlogs,
   sendFeedback,
+  getUserBlogs,
+  getUserDrafts,
+  deleteDraftById,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -73,18 +76,26 @@ router.post(
       // Continue to the next middleware
       next();
     });
-  } ,
+  },
   newDraft
 );
 
 // get latest blogs route
-router.get("/get/latest-blogs",getLatestBlogs)
+router.get("/get/latest-blogs", getLatestBlogs);
 
 // get the all blogs route
-router.get("/get/all-blogs",getAllBlogs)
+router.get("/get/all-blogs", getAllBlogs);
 
 // send feedback route
-router.post("/send-feedback",sendFeedback)
+router.post("/send-feedback", sendFeedback);
 
+// get user blogs
+router.get("/get/user-blogs", validateToken, getUserBlogs);
+
+// get user drafts
+router.get("/get/user-drafts", validateToken, getUserDrafts);
+
+// delete draft by id
+router.delete("/delete-draft/:id", validateToken, deleteDraftById);
 
 module.exports = router;

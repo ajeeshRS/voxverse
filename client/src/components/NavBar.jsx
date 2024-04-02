@@ -126,7 +126,7 @@ function NavBar() {
                     <div className="absolute right-0 mt-6 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
                       {/* Options content here */}
                       <ul>
-                        <li className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer">
+                        <li className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer" onClick={()=>navigate("/my-stories")} >
                           <img src={fileIcon} alt="" className="px-1" /> My
                           Stories
                         </li>

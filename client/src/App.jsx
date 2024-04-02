@@ -17,6 +17,7 @@ import NewPostPage from "./pages/NewPostPage";
 import AllArticles from "./components/AllArticles";
 import ViewArticle from "./pages/ViewArticle";
 import { setAllBlogs } from "./state/slices/AllBlogSlice";
+import UserStories from "./pages/UserStories";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
@@ -72,6 +73,7 @@ function App() {
       <Route path="/new-post" element={<NewPostPage/>} />
       <Route path="/articles" element={<AllArticles/>} />
       <Route path="/articles/:name/:id" element={<ViewArticle/>} />
+      <Route path="/my-stories" element={<UserStories/>} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

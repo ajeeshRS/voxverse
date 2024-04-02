@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
@@ -8,10 +8,13 @@ import {
 } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
 import backicon from "../assets/back.svg";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getHeaders } from "../helpers/getHeaders";
 function NewPostPage() {
   // React hook form
-  const { register, handleSubmit, formState, reset } = useForm();
+  const { register, handleSubmit, formState, reset, setValue } = useForm();
+  const location = useLocation();
+  const article = location.state && location.state.article;
 
   const navigate = useNavigate();
   // tags
@@ -42,6 +45,19 @@ function NewPostPage() {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
+  // function to delete draft by id
+  const deleteDraft = async (id) => {
+    try {
+      // requesting for delete draft
+      const data = await axios.delete(`${BASE_URL}/user/delete-draft/${id}`, {
+        // including authorization header
+        headers: getHeaders(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // on submit function(publish blog)
   const onSubmit = async (data, e) => {
     e.preventDefault();
@@ -64,10 +80,14 @@ function NewPostPage() {
         },
       });
       if (res.status == 200) {
+        // toast message
         notifyBlogCreation();
+        // reseting forms
         reset();
         setTags([]);
         setTagInput("");
+        // after publishing the blog if the article that is draft is there delete the draft
+        article && deleteDraft(article[0].id);
       }
     } catch (err) {
       console.log(err);
@@ -75,11 +95,10 @@ function NewPostPage() {
   };
 
   // on submit function(draft blog)
-
   const submitDraft = async (data, e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    // creating new formData and appendin the required datas
+    // creating new formData and appending the required datas
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("image", data.image[0]);
@@ -96,7 +115,9 @@ function NewPostPage() {
         },
       });
       if (res.status == 200) {
+        // toast message
         notifyBlogDraftCreation();
+        // reset forms
         reset();
         setTags([]);
         setTagInput("");
@@ -106,6 +127,14 @@ function NewPostPage() {
     }
   };
 
+  useEffect(() => {
+    if (article !== null) {
+      // Pre-fill form fields with article data
+      setValue("title", article[0].title);
+      setValue("image", article[0].image_filename);
+      setValue("content", article[0].content);
+    }
+  }, [article, setValue]);
   return (
     <div>
       {/* navbar */}

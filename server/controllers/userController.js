@@ -236,6 +236,74 @@ const sendFeedback = asyncHandler(async (req, res) => {
   }
 });
 
+// get user blogs
+const getUserBlogs = asyncHandler(async (req, res) => {
+  try {
+    // fetching user name from the req.user
+    const { username } = req.user;
+    // query
+    const query = `SELECT * FROM blogs WHERE user_id = $1`;
+    // performing query
+    const data = await pool.query(query, [username]);
+    // if it returns any row then respond to user with the data
+    if (data.rows) {
+      res.status(200).json(data.rows);
+    } else {
+      // else respond with a 404 status code that blogs not found
+      res.status(404).json("Blogs not found");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with error message and status code
+    res.status(500).json("Some internal error occured");
+  }
+});
+
+// get user drafts
+const getUserDrafts = asyncHandler(async (req, res) => {
+  try {
+    // fetching user name from the req.user
+    const { email } = req.user;
+    // query
+    const query = `SELECT * FROM blog_drafts WHERE user_id = $1`;
+    // performing query
+    const data = await pool.query(query, [email]);
+    // if it returns any row then respond to user with the data
+    if (data.rows) {
+      // console.log(data.rows);
+      res.status(200).json(data.rows);
+    } else {
+      // else respond with a 404 status code that blogs not found
+      res.status(404).json("Drafts not found");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Some internal error occured");
+  }
+});
+
+// delete draft with id
+const deleteDraftById = asyncHandler(async (req, res) => {
+  try {
+    // extracting id from the request params
+    const id = req.params.id;
+    console.log(id);
+    // query
+    const query = `DELETE FROM blog_drafts WHERE id = $1`;
+    // performing query
+    const data = await pool.query(query, [id]);
+    if (data.rowCount > 0) {
+      res.status(200).json("Draft deleted success");
+    } else {
+      res.status(404).json("Draft not found");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any error occurs respond with status code and error message
+    res.status(500).json("Some internal error occured");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -245,4 +313,7 @@ module.exports = {
   getLatestBlogs,
   getAllBlogs,
   sendFeedback,
+  getUserBlogs,
+  getUserDrafts,
+  deleteDraftById,
 };
