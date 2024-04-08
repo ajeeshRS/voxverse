@@ -183,6 +183,42 @@ const notifyFeedbackSend = (message) => {
     theme: "light",
   });
 };
+const notifyBlogUpdation = (message) => {
+  toast.success(message ? message : "Blog updated.", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyBlogDeletion = (message) => {
+  toast.success(message ? message : "Blog deleted.", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyBlogDeletionErr = (message) => {
+  toast.success(message ? message : "Couldn't delete the blog", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
 
 export {
   notifyAccountCreation,
@@ -198,5 +234,8 @@ export {
   notifyInvalidCredentials,
   notifyBlogCreation,
   notifyBlogDraftCreation,
-  notifyFeedbackSend
+  notifyFeedbackSend,
+  notifyBlogUpdation,
+  notifyBlogDeletion,
+  notifyBlogDeletionErr
 };

@@ -5,10 +5,13 @@ import { BASE_URL } from "../helpers/urls";
 import { getHeaders } from "../helpers/getHeaders";
 import { useNavigate } from "react-router";
 import { formatDate } from "../helpers/userHelpers";
-
+import trashIcon from "../assets/Trash.svg";
+import editIcon from "../assets/Edit.svg";
+import { notifyBlogDeletion, notifyBlogDeletionErr } from "../helpers/toastify";
 function UserStories() {
   const [userBlogs, setUserBlogs] = useState([]);
   const [userDrafts, setUserDrafts] = useState([]);
+  const [menuOpen, setMenuOpen] = useState([]);
   const navigate = useNavigate();
 
   // function to fetch user blogs
@@ -20,6 +23,8 @@ function UserStories() {
       });
       // setting user blog state
       setUserBlogs(response.data);
+
+      setMenuOpen(Array(response.data.length).fill(false));
     } catch (error) {
       console.log(error);
     }
@@ -38,6 +43,33 @@ function UserStories() {
       console.log(error);
     }
   };
+
+  // Function to toggle menuOpen state for a specific index
+  const toggleMenu = (index) => {
+    setMenuOpen((prevMenuOpen) => {
+      const newMenuOpen = [...prevMenuOpen];
+      newMenuOpen[index] = !newMenuOpen[index];
+      return newMenuOpen;
+    });
+  };
+
+  const handleDelete = async(id)=>{
+    try {
+      const message = await axios.delete(`${BASE_URL}/user/delete-story/${id}`,{
+        headers:getHeaders()
+      })
+      // after success deletion fetch user blogs again to uptate the stories
+      if(message.status == 200){
+        notifyBlogDeletion(message.data)
+        fetchUserBlogs()
+      }
+    } catch (error) {
+      console.log(error)
+      if(error.response.status == 400){
+        notifyBlogDeletionErr(error.response.data)
+      }
+    }
+  }
 
   // fetch blog on component load
   useEffect(() => {
@@ -74,9 +106,43 @@ function UserStories() {
                 />
 
                 <div className="flex flex-col">
-                  <p className=" text-black w-20   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
-                    {data.tags ? data.tags[0] : "no tags"}
-                  </p>
+                  <div className="w-full flex justify-between px-1">
+                    <p className=" text-black w-20   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
+                      {data.tags ? data.tags[0] : "no tags"}
+                    </p>
+                    <button
+                      onClick={() => toggleMenu(index)}
+                      className="text-2xl absolute right-3"
+                    >
+                      ...
+                    </button>
+                    {menuOpen[index] && (
+                      <div className="absolute right-0 mt-8 w-28 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                        {/* Options content here */}
+                        <ul>
+                          <li
+                            className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => navigate(`/my-stories/edit/${data.id}`,{state:{article:userBlogs.filter((obj)=>obj.id == data.id)}})}
+                          >
+                            <img
+                              src={editIcon}
+                              alt="edit-btn"
+                              className="px-1"
+                            />
+                            Edit
+                          </li>
+                          <li className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer text-red-600" onClick={()=>handleDelete(data.id)}>
+                            <img
+                              src={trashIcon}
+                              alt="delete-btn"
+                              className="px-1 "
+                            />{" "}
+                            Delete
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                   <p
                     className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm max-h-28 overflow-hidden hover:underline cursor-pointer"
                     // using encodeURIComponent to avoid the error caused by special characters in the url

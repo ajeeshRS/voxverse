@@ -304,6 +304,57 @@ const deleteDraftById = asyncHandler(async (req, res) => {
   }
 });
 
+// delete story by id
+const deleteStoryById = asyncHandler(async (req, res) => {
+  try {
+    // extracting id from the request params
+    const id = req.params.id;
+    console.log(id);
+    // query
+    const query = `DELETE FROM blogs WHERE id = $1`;
+
+    // performing query
+    const data = await pool.query(query, [id]);
+    if (data.rowCount > 0) {
+      res.status(200).json("Blog deleted success");
+    } else {
+      res.status(400).json("Error in deleting the blog");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any error occurs respond with status code and error message
+    res.status(500).json("Some internal error occured");
+  }
+});
+
+// function to update blogs
+const updateBlogs = asyncHandler(async (req, res) => {
+  try {
+    // getting id from params
+    const id = req.params.id;
+    // Extracting details from body
+    const { title, content, tags } = req.body;
+    // Extracting image from the req.file
+    const image = req.file;
+
+    // Updating  blog
+    const data = await pool.query(
+      `UPDATE blogs SET title=$1,content=$2,tags=$3,image_filename=$4,image_path=$5,image_destination=$6 WHERE id = $7`,
+      [title, content, tags, image.filename, image.path, image.destination, id]
+    );
+    // if updated respond with proper success message
+    if (data.rowCount > 0) {
+      res.status(200).json("Blog updated");
+    } else {
+      res.status(400).json("Error in updating blog");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with error message and status code
+    res.status(500).json("Some internal error occured");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -316,4 +367,6 @@ module.exports = {
   getUserBlogs,
   getUserDrafts,
   deleteDraftById,
+  deleteStoryById,
+  updateBlogs,
 };

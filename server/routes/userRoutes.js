@@ -11,6 +11,8 @@ const {
   getUserBlogs,
   getUserDrafts,
   deleteDraftById,
+  deleteStoryById,
+  updateBlogs,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -97,5 +99,24 @@ router.get("/get/user-drafts", validateToken, getUserDrafts);
 
 // delete draft by id
 router.delete("/delete-draft/:id", validateToken, deleteDraftById);
+
+// delete story by id
+router.delete("/delete-story/:id", validateToken, deleteStoryById);
+
+// update story by id
+router.put("/update-blog/:id", validateToken,(req, res, next) => {
+  // to check whether the middleware is invoked or not
+  // console.log("middleware is invoked");
+  uploadSingle(req, res, (err) => {
+    if (err) {
+      // Handle the error
+      res.status(500);
+      console.log(err);
+      throw new Error("file upload failed");
+    }
+    // Continue to the next middleware
+    next();
+  });
+}, updateBlogs);
 
 module.exports = router;
