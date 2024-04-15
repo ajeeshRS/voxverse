@@ -8,6 +8,7 @@ import { formatDate } from "../helpers/userHelpers";
 import trashIcon from "../assets/Trash.svg";
 import editIcon from "../assets/Edit.svg";
 import { notifyBlogDeletion, notifyBlogDeletionErr } from "../helpers/toastify";
+import { ToastContainer } from "react-toastify";
 function UserStories() {
   const [userBlogs, setUserBlogs] = useState([]);
   const [userDrafts, setUserDrafts] = useState([]);
@@ -53,23 +54,31 @@ function UserStories() {
     });
   };
 
-  const handleDelete = async(id)=>{
+  // handling delete
+  const handleDelete = async (id) => {
     try {
-      const message = await axios.delete(`${BASE_URL}/user/delete-story/${id}`,{
-        headers:getHeaders()
-      })
+      // sending DELETE request to backend
+      const message = await axios.delete(
+        `${BASE_URL}/user/delete-story/${id}`,
+        {
+          // including auth header
+          headers: getHeaders(),
+        }
+      );
       // after success deletion fetch user blogs again to uptate the stories
-      if(message.status == 200){
-        notifyBlogDeletion(message.data)
-        fetchUserBlogs()
+      if (message.status == 200) {
+        // show toast message
+        notifyBlogDeletion(message.data);
+        fetchUserBlogs();
       }
     } catch (error) {
-      console.log(error)
-      if(error.response.status == 400){
-        notifyBlogDeletionErr(error.response.data)
+      console.log(error);
+      if (error.response.status == 400) {
+        // show toast message
+        notifyBlogDeletionErr(error.response.data);
       }
     }
-  }
+  };
 
   // fetch blog on component load
   useEffect(() => {
@@ -81,16 +90,23 @@ function UserStories() {
     fetchUserDrafts();
   }, []);
 
+  // Scroll to the top of the page when component mounts or content changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       {/* navbar component */}
       <NavBar />
       <div className="pt-20 w-full ">
-        <div className="py-5">
-          <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
-            My Stories
-          </p>
-        </div>
+        {userBlogs.length > 0 && (
+          <div className="py-5">
+            <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
+              My Stories
+            </p>
+          </div>
+        )}
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 w-full items-center justify-between sm:h-full sm:pl-10 sm:mb-20 pb-10 pt-8 px-5  ">
           {/* if the articles are there then map and display the details */}
           {userBlogs ? (
@@ -122,7 +138,15 @@ function UserStories() {
                         <ul>
                           <li
                             className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => navigate(`/my-stories/edit/${data.id}`,{state:{article:userBlogs.filter((obj)=>obj.id == data.id)}})}
+                            onClick={() =>
+                              navigate(`/my-stories/edit/${data.id}`, {
+                                state: {
+                                  article: userBlogs.filter(
+                                    (obj) => obj.id == data.id
+                                  ),
+                                },
+                              })
+                            }
                           >
                             <img
                               src={editIcon}
@@ -131,7 +155,10 @@ function UserStories() {
                             />
                             Edit
                           </li>
-                          <li className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer text-red-600" onClick={()=>handleDelete(data.id)}>
+                          <li
+                            className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer text-red-600"
+                            onClick={() => handleDelete(data.id)}
+                          >
                             <img
                               src={trashIcon}
                               alt="delete-btn"
@@ -139,6 +166,17 @@ function UserStories() {
                             />{" "}
                             Delete
                           </li>
+                          <ToastContainer
+                            position="top-center"
+                            autoClose={3000}
+                            hideProgressBar={true}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            theme="light"
+                          />
                         </ul>
                       </div>
                     )}
@@ -172,11 +210,13 @@ function UserStories() {
           )}
         </div>
       </div>
-      <div className="py-5">
-        <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
-          Drafts
-        </p>
-      </div>
+      {userDrafts.length > 0 && (
+        <div className="py-5">
+          <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
+            Drafts
+          </p>
+        </div>
+      )}
       <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 w-full items-center justify-between sm:h-full sm:pl-10 sm:mb-20 pb-10 pt-8 px-5  ">
         {/* if the articles are there then map and display the details */}
         {userDrafts.length > 0 ? (
@@ -218,9 +258,9 @@ function UserStories() {
           ))
         ) : (
           // if no articles where found then display the message
-          <div className="flex w-full h-[20vh] justify-center items-center ">
-            <h1 className="font-montserrat font-bold text-lg">
-              No drafts where created by the user
+          <div className="flex w-[95vw] h-[20vh] justify-center items-center ">
+            <h1 className="font-poppins text-lg text-gray-400">
+              {userBlogs.length == null ? "Nothing here !" : null}
             </h1>
           </div>
         )}

@@ -13,6 +13,10 @@ const {
   deleteDraftById,
   deleteStoryById,
   updateBlogs,
+  addBookmark,
+  removeFromBookmarks,
+  checkBookmark,
+  getBookmarks,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -104,19 +108,36 @@ router.delete("/delete-draft/:id", validateToken, deleteDraftById);
 router.delete("/delete-story/:id", validateToken, deleteStoryById);
 
 // update story by id
-router.put("/update-blog/:id", validateToken,(req, res, next) => {
-  // to check whether the middleware is invoked or not
-  // console.log("middleware is invoked");
-  uploadSingle(req, res, (err) => {
-    if (err) {
-      // Handle the error
-      res.status(500);
-      console.log(err);
-      throw new Error("file upload failed");
-    }
-    // Continue to the next middleware
-    next();
-  });
-}, updateBlogs);
+router.put(
+  "/update-blog/:id",
+  validateToken,
+  (req, res, next) => {
+    // to check whether the middleware is invoked or not
+    // console.log("middleware is invoked");
+    uploadSingle(req, res, (err) => {
+      if (err) {
+        // Handle the error
+        res.status(500);
+        console.log(err);
+        throw new Error("file upload failed");
+      }
+      // Continue to the next middleware
+      next();
+    });
+  },
+  updateBlogs
+);
+
+// add bookmark
+router.post("/bookmark/add/:id", validateToken, addBookmark);
+
+// remove from bookmarks
+router.delete("/bookmark/delete/:id", validateToken, removeFromBookmarks);
+
+// check bookmark for blog
+router.get("/bookmark/get/:id", validateToken, checkBookmark);
+
+// Get all bookmark
+router.get("/get/bookmarks", validateToken, getBookmarks);
 
 module.exports = router;

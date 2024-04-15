@@ -207,11 +207,11 @@ function EditPostPage() {
                 placeholder="Type and press Enter to add tags"
                 className="md:w-[500px]  bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-4 w-[240px] pr-5"
               />
-              <div className="grid grid-cols-3">
+              <div className="grid sm:grid-cols-3 grid-cols-1">
                 {tags.map((tag, index) => (
                   <div
                     key={index}
-                    className="bg-gray-200 rounded-lg px-2 py-1 mr-2 mb-2 mt-4 flex items-center flex-wrap"
+                    className="bg-gray-200 rounded-lg px-2 py-1 mr-2 mb-2 mt-4 flex justify-between sm:justify-normal items-center flex-wrap"
                   >
                     {tag}
                     {/* tag remove button */}
@@ -241,21 +241,15 @@ function EditPostPage() {
         {/* for mobile screen */}
         <div className="block sm:hidden w-full text-center mt-14 ">
           {/* save draft button */}
-          <button
-            type="submit"
-            onClick={handleSubmit((data, e) => submitDraft(data, e))}
-            className=" mx-2 rounded-full text-white px-3  bg-red-500  hover:bg-red-600 text-sm w-auto h-[35px]"
-          >
-            Save draft
-          </button>
+          
           {/* pubilsh button */}
           <button
             type="submit"
             onClick={handleSubmit((data, e) => onSubmit(data, e))}
             disabled={formState.isSubmitting}
-            className=" mx-2 rounded-full text-white px-3 bg-black hover:bg-[#262626] text-sm w-auto h-[35px]"
+            className=" mx-2 rounded-full text-white px-3 mb-10 bg-black hover:bg-[#262626] text-sm w-auto h-[35px]"
           >
-            publish
+            Update
           </button>
         </div>
       </div>

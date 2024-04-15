@@ -219,6 +219,30 @@ const notifyBlogDeletionErr = (message) => {
     theme: "light",
   });
 };
+const notifyRemoveFromBookmarks = () => {
+  toast.success("Removed from bookmarks", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyAddBookmark = () => {
+  toast.success("Added to bookmarks", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
 
 export {
   notifyAccountCreation,
@@ -237,5 +261,7 @@ export {
   notifyFeedbackSend,
   notifyBlogUpdation,
   notifyBlogDeletion,
-  notifyBlogDeletionErr
+  notifyBlogDeletionErr,
+  notifyAddBookmark,
+  notifyRemoveFromBookmarks
 };

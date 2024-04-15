@@ -1,6 +1,13 @@
 const router = require("express").Router();
 const passport = require("passport");
-const { loginSuccess, logOut, forgotPassword, verifyOtp, resendOtp, resetPassword } = require("../controllers/authController");
+const {
+  loginSuccess,
+  logOut,
+  forgotPassword,
+  verifyOtp,
+  resendOtp,
+  resetPassword,
+} = require("../controllers/authController");
 
 // passport js auth route
 router.get(
@@ -24,14 +31,14 @@ router.get("/login/success", loginSuccess);
 router.get("/logout", logOut);
 
 // Forgot password route
-router.post("/forgot-password",forgotPassword)
+router.post("/forgot-password", forgotPassword);
 
 // verify otp
-router.post("/verify-otp",verifyOtp)
+router.post("/verify-otp", verifyOtp);
 
 // resend otp
-router.post("/resend-otp",resendOtp)
+router.post("/resend-otp", resendOtp);
 
 // update password
-router.put("/reset-password",resetPassword)
+router.put("/reset-password", resetPassword);
 module.exports = router;

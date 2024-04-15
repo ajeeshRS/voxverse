@@ -7,15 +7,23 @@ import addIcon from "../assets/Bookmark.svg";
 import removeIcon from "../assets/BookmarkOpen.svg";
 import axios from "axios";
 import { setAllBlogs } from "../state/slices/AllBlogSlice";
+import { getHeaders } from "../helpers/getHeaders";
+import {
+  notifyAddBookmark,
+  notifyRemoveFromBookmarks,
+} from "../helpers/toastify";
+import { ToastContainer } from "react-toastify";
+
 function ViewArticleCom() {
   // Extracting id from the url using the useParams() hook
   const { id } = useParams();
 
-  // state for toggle bookmark adding
-  const [toggleAdd, setToggleAdd] = useState(false);
+  // state for isbookmarked
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   // state for loading state
   const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
 
   // getting the blogData from the redux store
@@ -24,21 +32,42 @@ function ViewArticleCom() {
   // filtering the blog with the id from the url to display the individual blog
   const blog = blogData.filter((obj) => obj.id == id);
 
+  // add to bookmarks
+  const addToBookmarks = async (id) => {
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/user/bookmark/add/${id}`,
+        {},
+        {
+          headers: getHeaders(),
+        }
+      );
+      // show toast message
+      notifyAddBookmark();
+      setIsBookmarked(true); // Update isBookmarked state
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // Remove from bookmarks
+  const removeFromBookmarks = async (id) => {
+    try {
+      const res = await axios.delete(`${BASE_URL}/user/bookmark/delete/${id}`, {
+        headers: getHeaders(),
+      });
+      // show toast message
+      notifyRemoveFromBookmarks();
+      setIsBookmarked(false); // Update isBookmarked state
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (blogData.length > 0) {
       setLoading(false); // Set loading to false once data is loaded
     }
   }, [blogData]);
-
-  useEffect(() => {
-    // Fetch blog data only if it's not available
-    if (blogData.length === 0) {
-      fetchBlogs();
-    } else {
-      // If blog data is already available, set loading to false
-      setLoading(false);
-    }
-  }, []);
 
   // function to fetch all blogs
   const fetchBlogs = async () => {
@@ -52,11 +81,54 @@ function ViewArticleCom() {
     }
   };
 
+  useEffect(() => {
+    // Fetch blog data only if it's not available
+    if (blogData.length === 0) {
+      fetchBlogs();
+    } else {
+      // If blog data is already available, set loading to false
+      setLoading(false);
+    }
+  }, []);
+
+  // Use isBookmarked state to determine which icon to display
+  const bookmarkIcon = isBookmarked ? removeIcon : addIcon;
+
+  // Use toggleAdd state to toggle bookmark status
+  const handleToggleBookmark = () => {
+    if (isBookmarked) {
+      // if bookmarked remove it
+      removeFromBookmarks(id);
+    } else {
+      // else add it
+      addToBookmarks(id);
+    }
+  };
+
+  // checking the bookmark
+  useEffect(() => {
+    const checkBookmark = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/user/bookmark/get/${id}`,
+          {
+            headers: getHeaders(),
+          }
+        );
+        if (response.data) {
+          setIsBookmarked(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    checkBookmark();
+  }, [id]);
+
   // Scroll to the top of the page when component mounts or content changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
-  console.log(blog);
 
   return (
     <>
@@ -92,15 +164,24 @@ function ViewArticleCom() {
                   {data.user_id.toUpperCase()}
                 </p>
                 <p className="text-gray-600">{formatDate(data.created_at)}</p>
-                {toggleAdd ? (
-                  <button onClick={() => setToggleAdd("")}>
-                    <img src={removeIcon} alt="add-icon" />
-                  </button>
-                ) : (
-                  <button onClick={() => setToggleAdd(true)}>
-                    <img src={addIcon} alt="add-icon" />
-                  </button>
-                )}
+                <button onClick={handleToggleBookmark}>
+                  <img
+                    src={bookmarkIcon}
+                    alt={isBookmarked ? "remove-icon" : "add-icon"}
+                  />
+                </button>
+                {/* toast container*/}
+                <ToastContainer
+                  position="top-center"
+                  autoClose={3000}
+                  hideProgressBar={true}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  theme="light"
+                />
               </div>
               {/* content */}
               <div className="sm:w-2/4 py-10 w-full px-10 sm:px-0 space-sentence leading-loose font-poppins">
@@ -121,7 +202,7 @@ function ViewArticleCom() {
         // if no articles where found display the message
         <div className="flex w-full h-[100vh] justify-center items-center ">
           <h1 className="font-montserrat font-bold text-lg">
-            ! Article not found
+             Article not found
           </h1>
         </div>
       )}

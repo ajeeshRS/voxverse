@@ -355,6 +355,126 @@ const updateBlogs = asyncHandler(async (req, res) => {
   }
 });
 
+// function to add to bookmarks
+const addBookmark = asyncHandler(async (req, res) => {
+  try {
+    // getting id from url
+    const id = req.params.id;
+    // getting user from req
+    const user = req.user;
+    // console.log(id, user);
+    // checking for blog in db
+    const row = await pool.query(`SELECT * FROM Bookmark WHERE BlogID=$1`, [
+      id,
+    ]);
+    // if no row where found add to bookmark
+    if (row.rowCount == 0) {
+      const data = await pool.query(
+        `INSERT INTO Bookmark (UserID,BlogID) VALUES($1,$2)`,
+        [user.email, id]
+      );
+      // if any row is affected  respond with success status code and message
+      if (data.rowCount > 0) {
+        console.log("added");
+        res.status(200).json("Added to bookmarks");
+      } else {
+        res.status(400).json("Error in adding to bookmarks");
+      }
+      // if it is in the bookmark already respond with proper status code and message
+    } else {
+      res.status(409).json("Already bookmarked");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with error status code and message
+    res.status(500).json("Internal server error");
+  }
+});
+
+// function to remove from bookmarks
+const removeFromBookmarks = asyncHandler(async (req, res) => {
+  try {
+    // getting id from the url
+    const id = req.params.id;
+    // getting user for the request
+    const user = req.user;
+    // getting the blog with id
+    const exist = await pool.query(`SELECT * FROM Bookmark WHERE BlogID=$1`, [
+      id,
+    ]);
+    if (exist.rowCount) {
+      // if it exist remove from db
+      const data = await pool.query(
+        `DELETE FROM Bookmark WHERE BlogID=$1 AND UserID=$2`,
+        [id, user.email]
+      );
+      // if it return any row respond with status code and message
+      if (data.rowCount > 0) {
+        res.status(200).json("Removed from bookmarks");
+        console.log("removed");
+      } else {
+        // respond with error status code and message
+        res.status(400).json("Error in removing from bookmarks");
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with error status code and message
+    res.status(500).json("Internal server error");
+  }
+});
+
+// function to check blog is bookmarked or not
+const checkBookmark = asyncHandler(async (req, res) => {
+  try {
+    // getting id from url
+    const id = req.params.id;
+    console.log(id);
+    // getting the blog from the bookmark
+    const data = await pool.query(`SELECT * FROM Bookmark WHERE BlogID =$1`, [
+      id,
+    ]);
+    // console.log(data.rows)
+    // if it is in the bookmark then respond true
+    if (data.rowCount > 0) {
+      res.status(200).json(true);
+      // else pass false
+    } else {
+      res.status(404).json(false);
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other erro occurs respond with error status code and  message
+    res.status(500).json("Internal server error");
+  }
+});
+
+// function to get all the bookmarks
+const getBookmarks = asyncHandler(async (req, res) => {
+  try {
+    // getting user from the request
+    const user = req.user;
+    // console.log(user)
+    // getting the blogs for the user from the bookmarks
+    const data = await pool.query(`SELECT * FROM Bookmark WHERE UserID = $1`, [
+      user.email,
+    ]);
+
+    // if it returns any rows respond with the data
+    if (data.rowCount) {
+      res.status(200).json(data.rows);
+    } else {
+      // responding with 404 error code
+      res.status(404).json("No bookmark where found");
+      console.log("Couldn't fetch docs");
+    }
+  } catch (error) {
+    console.log(error);
+    // if any other error occurs respond with error status code and message
+    res.status(500).json("Internal server error");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -369,4 +489,8 @@ module.exports = {
   deleteDraftById,
   deleteStoryById,
   updateBlogs,
+  addBookmark,
+  removeFromBookmarks,
+  checkBookmark,
+  getBookmarks,
 };

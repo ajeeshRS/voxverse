@@ -35,7 +35,7 @@ function AllArticles() {
 
   return (
     <>
-    {/* navbar component */}
+      {/* navbar component */}
       <NavBar />
       {/* All article container */}
       <div className="w-full pt-24">

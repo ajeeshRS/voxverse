@@ -19,12 +19,12 @@ import ViewArticle from "./pages/ViewArticle";
 import { setAllBlogs } from "./state/slices/AllBlogSlice";
 import UserStories from "./pages/UserStories";
 import EditPostPage from "./pages/EditPostPage";
+import BookmarkPage from "./pages/BookmarkPage";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const fetchAllArticles = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/user/get/all-blogs`);
@@ -33,8 +33,8 @@ function App() {
         console.log(error);
       }
     };
-    fetchAllArticles()
-  },[])
+    fetchAllArticles();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,11 +71,12 @@ function App() {
         </>
       )}
 
-      <Route path="/new-post" element={<NewPostPage/>} />
-      <Route path="/articles" element={<AllArticles/>} />
-      <Route path="/articles/:name/:id" element={<ViewArticle/>} />
-      <Route path="/my-stories" element={<UserStories/>} />
-      <Route path="/my-stories/edit/:id" element={<EditPostPage/>} />
+      <Route path="/new-post" element={<NewPostPage />} />
+      <Route path="/articles" element={<AllArticles />} />
+      <Route path="/articles/:name/:id" element={<ViewArticle />} />
+      <Route path="/my-stories" element={<UserStories />} />
+      <Route path="/my-stories/edit/:id" element={<EditPostPage />} />
+      <Route path="/bookmarks" element={<BookmarkPage />} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

@@ -45,27 +45,29 @@ function SignupPage() {
 
   const password = watch("password");
 
+  // submit handling
   const onSubmit = async (data) => {
     try {
+      // sending request to backend
       const response = await axios.post(`${BASE_URL}/user/signup`, data);
 
       if (response.status === 201) {
+        // show toast message
         notifyAccountCreation();
       }
+      // resetting form
       reset();
     } catch (error) {
       if (error.response.status === 400) {
+        // show toast message
         notifyEmailExistError();
       }
     }
   };
 
   const googleAuth = () => {
-		window.open(
-			`${BASE_URL}/auth/google/callback`,
-			"_self"
-		);
-	};
+    window.open(`${BASE_URL}/auth/google/callback`, "_self");
+  };
   return (
     <div className="bg-[#F5F9E9] w-full h-[100vh] flex justify-center items-center">
       <div className="bg-white shadow-lg w-3/4 md:w-2/4  md:h-[85%] h-[65%]  rounded-lg flex flex-col justify-start items-center  ">
@@ -166,6 +168,7 @@ function SignupPage() {
             >
               Sign up
             </button>
+            {/* toast container */}
             <ToastContainer
               position="top-center"
               autoClose={3000}
@@ -196,7 +199,10 @@ function SignupPage() {
 
           {/* Sign up with google button */}
           <div className="flex w-full h-[40px] md:mt-8 mt-5 items-center justify-center">
-            <button className="bg-[#f5f5f5] hover:bg-[rgb(238,238,238)] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg" onClick={()=>googleAuth()}>
+            <button
+              className="bg-[#f5f5f5] hover:bg-[rgb(238,238,238)] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg"
+              onClick={() => googleAuth()}
+            >
               <img
                 src={googleIcon}
                 alt="google-img"
