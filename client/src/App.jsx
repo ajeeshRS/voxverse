@@ -23,6 +23,7 @@ import BookmarkPage from "./pages/BookmarkPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import UpdateprofilePage from "./pages/UpdateprofilePage";
 import UpdateAvatarPage from "./pages/UpdateAvatarPage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
@@ -83,6 +84,7 @@ function App() {
       <Route path="/profile" element={<UserProfilePage />} />
       <Route path="/update-profile" element={<UpdateprofilePage />} />
       <Route path="/update-avatar" element={<UpdateAvatarPage />} />
+      <Route path="/change-password" element={<ChangePasswordPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

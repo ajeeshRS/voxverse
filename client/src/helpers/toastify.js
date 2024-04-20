@@ -291,6 +291,42 @@ const notifyErrUpdateAvatar = () => {
     theme: "light",
   });
 };
+const notifyUpdatePassword = () => {
+  toast.success("Password updated successfully", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyErrUpdatePassword = () => {
+  toast.error("Error in updating password", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyErrCheckPassword = () => {
+  toast.error("Invalid current password", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
 
 export {
   notifyAccountCreation,
@@ -315,5 +351,8 @@ export {
   notifyUpdateProfile,
   notifyUpdateAvatar,
   notifyErrUpdateAvatar,
-  notifyErrUpdateProfile
+  notifyErrUpdateProfile,
+  notifyUpdatePassword,
+  notifyErrUpdatePassword,
+  notifyErrCheckPassword,
 };

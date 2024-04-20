@@ -11,7 +11,7 @@ import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
 import { getHeaders } from "../helpers/getHeaders";
 import editIcon from "../assets/Edit.svg"
-
+import passwordIcon from "../assets/Password.svg"
 function UserProfilePage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -90,13 +90,19 @@ function UserProfilePage() {
             className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer font-poppins"
             onClick={() => navigate("/my-stories")}
           >
-            <img src={fileIcon} alt="" className="px-1 pr-4" /> My Stories
+            <img src={fileIcon} alt="stories-icon" className="px-1 pr-4" /> My Stories
           </li>
           <li
             className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer mt-2 font-poppins"
             onClick={() => navigate("/bookmarks")}
           >
-            <img src={bookmarkIcon} alt="" className="px-1 pr-4" /> Bookmarks
+            <img src={bookmarkIcon} alt="bookmark-icon" className="px-1 pr-4" /> Bookmarks
+          </li>
+          <li
+            className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer mt-2 font-poppins"
+            onClick={() => navigate("/change-password")}
+          >
+            <img src={passwordIcon} alt="password-icon" className="px-1 pr-4" /> Change password
           </li>
           <li
             className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer mt-2 font-poppins"
@@ -106,7 +112,7 @@ function UserProfilePage() {
               dispatch(setUser({}));
             }}
           >
-            <img src={logoutIcon} alt="" className="px-1 pr-4" /> Logout
+            <img src={logoutIcon} alt="logout-icon" className="px-1 pr-4" /> Logout
           </li>
         </ul>
       </div>

@@ -19,6 +19,7 @@ const {
   getBookmarks,
   updateProfile,
   updateAvatar,
+  changePassword,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -168,4 +169,8 @@ router.post(
   },
   updateAvatar
 );
+
+// change password
+router.put("/change-password", validateToken, changePassword);
+
 module.exports = router;

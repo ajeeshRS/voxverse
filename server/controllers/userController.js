@@ -507,6 +507,44 @@ const updateAvatar = asyncHandler(async (req, res) => {
   }
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+  try {
+    const { currentPassword, password } = req.body;
+    const user = req.user;
+
+    // checking db for the user
+    const data = await pool.query(`SELECT * FROM users WHERE email=$1`, [
+      user.email,
+    ]);
+
+    if (!data.rowCount > 0) {
+      console.log("user not found");
+      res.status(404).json("User not found");
+    }
+
+    // comparing the passwords
+    if (!(await bcrypt.compare(currentPassword, data.rows[0].password))) {
+      console.log("passwords not matches");
+      return res.status(401).json("Passwords doesn't match");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // updates the current password with new hashed password
+    const response = await pool.query(`UPDATE users SET Password=$1`, [
+      hashedPassword,
+    ]);
+
+    if (!response.rowCount > 0) {
+      return res.status(400).json("Unable to update password");
+    } else {
+      res.status(200).json("Password updated successfully");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal server error");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -527,4 +565,5 @@ module.exports = {
   getBookmarks,
   updateProfile,
   updateAvatar,
+  changePassword,
 };
