@@ -20,6 +20,9 @@ import { setAllBlogs } from "./state/slices/AllBlogSlice";
 import UserStories from "./pages/UserStories";
 import EditPostPage from "./pages/EditPostPage";
 import BookmarkPage from "./pages/BookmarkPage";
+import UserProfilePage from "./pages/UserProfilePage";
+import UpdateprofilePage from "./pages/UpdateprofilePage";
+import UpdateAvatarPage from "./pages/UpdateAvatarPage";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
@@ -77,7 +80,9 @@ function App() {
       <Route path="/my-stories" element={<UserStories />} />
       <Route path="/my-stories/edit/:id" element={<EditPostPage />} />
       <Route path="/bookmarks" element={<BookmarkPage />} />
-
+      <Route path="/profile" element={<UserProfilePage />} />
+      <Route path="/update-profile" element={<UpdateprofilePage />} />
+      <Route path="/update-avatar" element={<UpdateAvatarPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

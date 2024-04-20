@@ -243,6 +243,54 @@ const notifyAddBookmark = () => {
     theme: "light",
   });
 };
+const notifyUpdateProfile = () => {
+  toast.success("Profile updated", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyErrUpdateProfile = () => {
+  toast.error("Error in updating profile", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyUpdateAvatar = () => {
+  toast.success("Avatar updated", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+const notifyErrUpdateAvatar = () => {
+  toast.error("Error in updating Avatar", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
 
 export {
   notifyAccountCreation,
@@ -263,5 +311,9 @@ export {
   notifyBlogDeletion,
   notifyBlogDeletionErr,
   notifyAddBookmark,
-  notifyRemoveFromBookmarks
+  notifyRemoveFromBookmarks,
+  notifyUpdateProfile,
+  notifyUpdateAvatar,
+  notifyErrUpdateAvatar,
+  notifyErrUpdateProfile
 };

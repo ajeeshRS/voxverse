@@ -2,7 +2,6 @@ const pool = require("../config/db");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
-// Function to check email existence
 const checkEmailExistence = async (email) => {
   try {
     // query
@@ -25,7 +24,7 @@ const generateOtp = () => {
   return otp.toString().padStart(otpLength, "0");
 };
 
-// function to send mail
+// function to send otp mail
 const sendEmail = (email, otp) => {
   try {
     // Create a transporter using SMTP transport
@@ -66,7 +65,6 @@ const sendEmail = (email, otp) => {
   }
 };
 
-// function to send feedback
 const sendFeedbackMail = (message) => {
   try {
     // Create a transporter using SMTP transport
@@ -104,7 +102,6 @@ const sendFeedbackMail = (message) => {
   }
 };
 
-// Export modules
 module.exports = {
   checkEmailExistence,
   generateOtp,

@@ -36,38 +36,33 @@ function SignupPage() {
   const {
     handleSubmit,
     register,
-    watch,
     reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema), // Use zodResolver to integrate Zod schema with React Hook Form
   });
 
-  const password = watch("password");
 
-  // submit handling
   const onSubmit = async (data) => {
     try {
-      // sending request to backend
       const response = await axios.post(`${BASE_URL}/user/signup`, data);
 
       if (response.status === 201) {
-        // show toast message
         notifyAccountCreation();
       }
-      // resetting form
       reset();
     } catch (error) {
       if (error.response.status === 400) {
-        // show toast message
         notifyEmailExistError();
       }
     }
   };
 
+  // for opening google account login
   const googleAuth = () => {
     window.open(`${BASE_URL}/auth/google/callback`, "_self");
   };
+
   return (
     <div className="bg-[#F5F9E9] w-full h-[100vh] flex justify-center items-center">
       <div className="bg-white shadow-lg w-3/4 md:w-2/4  md:h-[85%] h-[65%]  rounded-lg flex flex-col justify-start items-center  ">

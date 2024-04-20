@@ -16,8 +16,8 @@ function BookmarkPage() {
   const [bookmarks, setBookmarks] = useState([]);
   const blogs = useSelector((state) => state.allBlogState.allBlogs);
 
-  const bookmarkedIds = bookmarks.map((obj) => obj["blogid"]);
-  let bookmarkBlogs = blogs.filter((blog) => bookmarkedIds.includes(blog.id));
+  const bookmarkedIds = bookmarks.map((obj) => obj["blogid"]); //extracting ids from the row
+  let bookmarkBlogs = blogs.filter((blog) => bookmarkedIds.includes(blog.id)); //getting the bookmarked blogs
 
   // Function to toggle menuOpen state for a specific index
   const toggleMenu = (index) => {
@@ -31,7 +31,6 @@ function BookmarkPage() {
   // handling remove from bookmarks
   const handleDelete = async (id) => {
     try {
-      // making request to the backend
       const res = await axios.delete(`${BASE_URL}/user/bookmark/delete/${id}`, {
         // including auth header
         headers: getHeaders(),

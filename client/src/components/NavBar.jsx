@@ -39,7 +39,7 @@ function NavBar() {
       const tokenResponse = await axios.get(`${BASE_URL}/user/get`, {
         headers: getHeaders(),
       });
-
+      // console.log(tokenResponse.data)
       dispatch(setUser(tokenResponse.data));
     } catch (error) {
       console.log("Error fetching user with token:", error);
@@ -60,6 +60,7 @@ function NavBar() {
   // fetch user on component mount
   useEffect(() => {
     fetchUser();
+    // console.log(user)
   }, []);
 
   return (
@@ -115,11 +116,19 @@ function NavBar() {
               <>
                 <div className="relative">
                   <button
-                    className="sm:block hidden p-2 rounded-full bg-gray-200 w-10 h-10 hover:bg-gray-300 focus:outline-none"
+                    className="sm:block hidden p-2 rounded-full bg-gray-200 w-14 h-14 hover:bg-gray-300 focus:outline-none relative overflow-hidden"
                     // opening and closing of right side menu
                     onClick={() => setMenuOpen(!menuOpen)}
                   >
-                    {userFirstLetter}
+                    {user.avatar ? (
+                      <img
+                        src={`${BASE_URL}/uploads/${user.avatar}`}
+                        alt="image-preview"
+                        className="w-full h-full object-cover rounded-full "
+                      />
+                    ) : (
+                      <span className="text-black text-xl">{userFirstLetter}</span>
+                    )}{" "}
                   </button>
                   {/* if menu button is clicked then display the options */}
                   {menuOpen && (
@@ -140,7 +149,10 @@ function NavBar() {
                           <img src={bookmarkIcon} alt="" className="px-1" />{" "}
                           Bookmarks
                         </li>
-                        <li className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer">
+                        <li
+                          className=" flex py-2 px-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => navigate("/profile")}
+                        >
                           <img src={userIcon} alt="" className="px-1" /> Profile
                         </li>
                         <li

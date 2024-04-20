@@ -1,10 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const { generateOtp, sendEmail } = require("../helpers/userUtils");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
 const pool = require("../config/db");
 
-// login success function
 const loginSuccess = asyncHandler(async (req, res) => {
   try {
     // if req.user exist respond with the user login message and the user to the clien
@@ -20,7 +18,6 @@ const loginSuccess = asyncHandler(async (req, res) => {
   }
 });
 
-// Logout function
 const logOut = asyncHandler(async (req, res, next) => {
   try {
     // Use the req.logout to log out from the site
@@ -37,7 +34,6 @@ const logOut = asyncHandler(async (req, res, next) => {
   }
 });
 
-// forgot password function
 const forgotPassword = asyncHandler(async (req, res) => {
   try {
     // Extracting email from the req.body
@@ -74,7 +70,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 });
 
-// verify otp function
 const verifyOtp = asyncHandler(async (req, res) => {
   try {
     // Extracting otp and email from the req.body
@@ -97,7 +92,6 @@ const verifyOtp = asyncHandler(async (req, res) => {
   }
 });
 
-// resend otp function
 const resendOtp = asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
@@ -123,7 +117,6 @@ const resendOtp = asyncHandler(async (req, res) => {
   }
 });
 
-// reset password function
 const resetPassword = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -151,7 +144,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.status(500).json("Internal server error");
   }
 });
-// exporting modules
+
 module.exports = {
   loginSuccess,
   logOut,

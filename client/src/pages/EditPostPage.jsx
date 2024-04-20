@@ -3,14 +3,11 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
 import {
-  notifyBlogCreation,
-  notifyBlogDraftCreation,
   notifyBlogUpdation,
 } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
 import backicon from "../assets/back.svg";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getHeaders } from "../helpers/getHeaders";
 
 function EditPostPage() {
   const { register, handleSubmit, formState, reset, setValue } = useForm();
@@ -31,6 +28,7 @@ function EditPostPage() {
     setTagInput(e.target.value);
     console.log(e.target.value);
   };
+
   // To add taginput when pressing enter key
   const handleTagInputKeyDown = (e) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
@@ -62,7 +60,6 @@ function EditPostPage() {
         formData.append("tags[]", tag); // Append each element of the array with the same key
       });
 
-      // sending data to the backend
       const res = await axios.put(
         `${BASE_URL}/user/update-blog/${article[0].id}`,
         formData,

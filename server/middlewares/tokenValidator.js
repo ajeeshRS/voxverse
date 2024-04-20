@@ -4,7 +4,6 @@ const validateToken = async (req, res, next) => {
   // extracting token from the header
   const token = req.headers.authorization || req.headers.Authorization;
 
-  // if  no token where found respond with error message
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: Missing token" });
   }
@@ -25,10 +24,8 @@ const validateToken = async (req, res, next) => {
     // verify the token using verify function and assign the decoded user to the req.user
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
     req.user = decoded.user;
-    // move to next controller
     next();
   } catch (error) {
-    // if any other error occurs respond with error message and status code
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };

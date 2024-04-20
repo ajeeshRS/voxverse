@@ -17,11 +17,14 @@ const {
   removeFromBookmarks,
   checkBookmark,
   getBookmarks,
+  updateProfile,
+  updateAvatar,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
 const multer = require("multer");
 const path = require("path");
+
 // Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -46,6 +49,7 @@ router.post("/login", userLogin);
 // get user details route
 router.get("/get", validateToken, getUserInfo);
 
+// new blog
 router.post(
   "/new-blog",
   validateToken,
@@ -66,6 +70,7 @@ router.post(
   newBlog
 );
 
+// new draft
 router.post(
   "/new-draft",
   validateToken,
@@ -140,4 +145,27 @@ router.get("/bookmark/get/:id", validateToken, checkBookmark);
 // Get all bookmark
 router.get("/get/bookmarks", validateToken, getBookmarks);
 
+// update profile
+router.post("/update-profile", validateToken, updateProfile);
+
+// update avatar
+router.post(
+  "/update-avatar",
+  validateToken,
+  (req, res, next) => {
+    // to check whether the middleware is invoked or not
+    // console.log("middleware is invoked");
+    uploadSingle(req, res, (err) => {
+      if (err) {
+        // Handle the error
+        res.status(500);
+        console.log(err);
+        throw new Error("file upload failed");
+      }
+      // Continue to the next middleware
+      next();
+    });
+  },
+  updateAvatar
+);
 module.exports = router;

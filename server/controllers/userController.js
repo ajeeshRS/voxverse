@@ -7,7 +7,6 @@ const {
 } = require("../helpers/userUtils");
 const jwt = require("jsonwebtoken");
 
-// Creating new user
 const registerUser = asyncHandler(async (req, res) => {
   try {
     // Validate input
@@ -15,14 +14,13 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!userName || !email || !password) {
       return res.status(400).json("All fields are mandatory");
     }
-    // Checking email existence
+
     const emailExists = await checkEmailExistence(email);
     if (emailExists) {
       console.log("email exists");
       return res.status(400).json("Email already exists");
     }
 
-    //  Hashing password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Creating user
@@ -44,7 +42,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-// user login
 const userLogin = asyncHandler(async (req, res) => {
   try {
     // checking user inputs
@@ -52,11 +49,14 @@ const userLogin = asyncHandler(async (req, res) => {
     if (!email || !password) {
       return res.status(400).json("All fields are mandatory");
     }
+
     // Checking user existence
     const user = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
+
     const userPassword = user.rows[0].password;
+
     // if user and  the passwords are matching generate token and send to the client
     if (user && (await bcrypt.compare(password, userPassword))) {
       const accessToken = jwt.sign(
@@ -79,15 +79,24 @@ const userLogin = asyncHandler(async (req, res) => {
   }
 });
 
-//Get user info
 const getUserInfo = asyncHandler(async (req, res) => {
   try {
-    // Extracting user from the request
     const user = req.user;
 
+    const data = await pool.query(
+      `SELECT username,email,bio,avatar FROM users WHERE email=$1`,
+      [user.email]
+    );
     // if the user exist send the user to the client
-    if (user) {
-      res.status(200).json(user);
+    if (data.rowCount > 0) {
+      const formatedData = {
+        username: data.rows[0].username,
+        bio: data.rows[0].bio,
+        email: data.rows[0].email,
+        avatar: data.rows[0].avatar,
+      };
+
+      res.status(200).json(formatedData);
     } else {
       res.status(404).json("error fetching in user details");
     }
@@ -97,13 +106,10 @@ const getUserInfo = asyncHandler(async (req, res) => {
   }
 });
 
-// creating new blog
 const newBlog = asyncHandler(async (req, res) => {
   try {
-    // getting the details from the req.body
     const { title, content, tags } = req.body;
 
-    // getting the image from the req.file
     const image = req.file;
 
     // getting the user from the req.user
@@ -133,25 +139,21 @@ const newBlog = asyncHandler(async (req, res) => {
       res.status(400).json("Error in saving blog");
     }
   } catch (error) {
-    // send error message and status code on any other errors
     console.log(error);
     res.status(500).json("some internal error occured!");
   }
 });
 
-// creating draft
 const newDraft = asyncHandler(async (req, res) => {
   try {
-    // getting the details from the req.body
     const { title, content, tags } = req.body;
 
-    // getting image from the req.file
     const image = req.file;
 
     // getting user form the req.user
     const user = req.user;
 
-    console.log(user);
+    // console.log(user);
 
     // creating draft
     const data = await pool.query(
@@ -177,7 +179,6 @@ const newDraft = asyncHandler(async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    // send error message and status code on any other errors
 
     res.status(500).json("Some internal error occured");
   }
@@ -195,13 +196,11 @@ const getLatestBlogs = asyncHandler(async (req, res) => {
       res.status(200).json(data.rows);
     }
   } catch (err) {
-    // if any other error occurs then respond with status 500 and error message
     console.log(err);
     res.status(500).json("Some internal error occured");
   }
 });
 
-// fetching all blogs from the db
 const getAllBlogs = asyncHandler(async (req, res) => {
   try {
     // query
@@ -214,12 +213,10 @@ const getAllBlogs = asyncHandler(async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    // if any other error occurs then respond with status 500 and error message
     res.status(500).json("Some internal error occured");
   }
 });
 
-// send feedback
 const sendFeedback = asyncHandler(async (req, res) => {
   try {
     // Extracting feedback from the req.body
@@ -227,24 +224,22 @@ const sendFeedback = asyncHandler(async (req, res) => {
 
     // sending mail to the admin
     sendFeedbackMail(message);
+
     // on success respond with status code and message
     res.status(200).json("Feedback has been sent !");
   } catch (error) {
     console.log(error);
-    // if any other error occurs respond with status code and error message
     res.status(500).json("Some internal error occured");
   }
 });
 
-// get user blogs
 const getUserBlogs = asyncHandler(async (req, res) => {
   try {
-    // fetching user name from the req.user
-    const { username } = req.user;
+    const { username, email } = req.user;
     // query
-    const query = `SELECT * FROM blogs WHERE user_id = $1`;
+    const query = `SELECT * FROM blogs WHERE email = $1`;
     // performing query
-    const data = await pool.query(query, [username]);
+    const data = await pool.query(query, [email]);
     // if it returns any row then respond to user with the data
     if (data.rows) {
       res.status(200).json(data.rows);
@@ -254,15 +249,12 @@ const getUserBlogs = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    // if any other error occurs respond with error message and status code
     res.status(500).json("Some internal error occured");
   }
 });
 
-// get user drafts
 const getUserDrafts = asyncHandler(async (req, res) => {
   try {
-    // fetching user name from the req.user
     const { email } = req.user;
     // query
     const query = `SELECT * FROM blog_drafts WHERE user_id = $1`;
@@ -282,7 +274,6 @@ const getUserDrafts = asyncHandler(async (req, res) => {
   }
 });
 
-// delete draft with id
 const deleteDraftById = asyncHandler(async (req, res) => {
   try {
     // extracting id from the request params
@@ -304,7 +295,6 @@ const deleteDraftById = asyncHandler(async (req, res) => {
   }
 });
 
-// delete story by id
 const deleteStoryById = asyncHandler(async (req, res) => {
   try {
     // extracting id from the request params
@@ -327,14 +317,11 @@ const deleteStoryById = asyncHandler(async (req, res) => {
   }
 });
 
-// function to update blogs
 const updateBlogs = asyncHandler(async (req, res) => {
   try {
     // getting id from params
     const id = req.params.id;
-    // Extracting details from body
     const { title, content, tags } = req.body;
-    // Extracting image from the req.file
     const image = req.file;
 
     // Updating  blog
@@ -355,12 +342,9 @@ const updateBlogs = asyncHandler(async (req, res) => {
   }
 });
 
-// function to add to bookmarks
 const addBookmark = asyncHandler(async (req, res) => {
   try {
-    // getting id from url
     const id = req.params.id;
-    // getting user from req
     const user = req.user;
     // console.log(id, user);
     // checking for blog in db
@@ -380,24 +364,20 @@ const addBookmark = asyncHandler(async (req, res) => {
       } else {
         res.status(400).json("Error in adding to bookmarks");
       }
-      // if it is in the bookmark already respond with proper status code and message
     } else {
       res.status(409).json("Already bookmarked");
     }
   } catch (error) {
     console.log(error);
-    // if any other error occurs respond with error status code and message
     res.status(500).json("Internal server error");
   }
 });
 
-// function to remove from bookmarks
 const removeFromBookmarks = asyncHandler(async (req, res) => {
   try {
-    // getting id from the url
     const id = req.params.id;
-    // getting user for the request
     const user = req.user;
+
     // getting the blog with id
     const exist = await pool.query(`SELECT * FROM Bookmark WHERE BlogID=$1`, [
       id,
@@ -419,17 +399,14 @@ const removeFromBookmarks = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    // if any other error occurs respond with error status code and message
     res.status(500).json("Internal server error");
   }
 });
 
-// function to check blog is bookmarked or not
 const checkBookmark = asyncHandler(async (req, res) => {
   try {
-    // getting id from url
     const id = req.params.id;
-    console.log(id);
+    // console.log(id);
     // getting the blog from the bookmark
     const data = await pool.query(`SELECT * FROM Bookmark WHERE BlogID =$1`, [
       id,
@@ -438,23 +415,20 @@ const checkBookmark = asyncHandler(async (req, res) => {
     // if it is in the bookmark then respond true
     if (data.rowCount > 0) {
       res.status(200).json(true);
-      // else pass false
     } else {
       res.status(404).json(false);
     }
   } catch (error) {
     console.log(error);
-    // if any other erro occurs respond with error status code and  message
     res.status(500).json("Internal server error");
   }
 });
 
-// function to get all the bookmarks
 const getBookmarks = asyncHandler(async (req, res) => {
   try {
-    // getting user from the request
     const user = req.user;
     // console.log(user)
+
     // getting the blogs for the user from the bookmarks
     const data = await pool.query(`SELECT * FROM Bookmark WHERE UserID = $1`, [
       user.email,
@@ -470,7 +444,65 @@ const getBookmarks = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    // if any other error occurs respond with error status code and message
+    res.status(500).json("Internal server error");
+  }
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+  try {
+    const { username, bio } = req.body;
+    const { email } = req.user;
+    // performing query
+    const data = await pool.query(`SELECT * FROM users WHERE email=$1`, [
+      email,
+    ]);
+    // if it returns any row update the row with new info
+    if (data.rowCount > 0) {
+      if (username || bio) {
+        const data = await pool.query(
+          `UPDATE users SET username=$1 WHERE email=$2`,
+          [username, email]
+        );
+        const response = await pool.query(
+          `UPDATE users SET bio=$1 WHERE email=$2`,
+          [bio, email]
+        );
+        // also updates the username in the blogs db
+        const result = await pool.query(
+          `UPDATE blogs SET user_id=$1 WHERE email=$2`,
+          [username, email]
+        );
+
+        if (data.rowCount > 0 || response.rowCount > 0) {
+          res.status(200).json("Details updated");
+        } else {
+          res.status(400).json("Couldn't update Details");
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal server error");
+  }
+});
+
+const updateAvatar = asyncHandler(async (req, res) => {
+  try {
+    const image = req.file;
+    const { email } = req.user;
+    // performing query
+    const data = await pool.query(
+      `UPDATE users SET avatar=$1 WHERE email=$2 `,
+      [image.filename, email]
+    );
+    // if it returns any row respond with message
+    if (data.rowCount > 0) {
+      res.status(200).json("Avatar updated");
+    } else {
+      res.status(400).json("Unable to update avatar");
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500).json("Internal server error");
   }
 });
@@ -493,4 +525,6 @@ module.exports = {
   removeFromBookmarks,
   checkBookmark,
   getBookmarks,
+  updateProfile,
+  updateAvatar,
 };
