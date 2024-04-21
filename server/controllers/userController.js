@@ -84,7 +84,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
     const user = req.user;
 
     const data = await pool.query(
-      `SELECT username,email,bio,avatar FROM users WHERE email=$1`,
+      `SELECT username,email,bio,avatar,google_id FROM users WHERE email=$1`,
       [user.email]
     );
     // if the user exist send the user to the client
@@ -94,6 +94,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
         bio: data.rows[0].bio,
         email: data.rows[0].email,
         avatar: data.rows[0].avatar,
+        google_id:data.rows[0].google_id?data.rows[0].google_id:null
       };
 
       res.status(200).json(formatedData);
@@ -119,7 +120,7 @@ const newBlog = asyncHandler(async (req, res) => {
 
     // creating  new blog
     const data = await pool.query(
-      `INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      `INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
       [
         user.username,
         title,
@@ -128,6 +129,7 @@ const newBlog = asyncHandler(async (req, res) => {
         image.filename,
         image.path,
         image.destination,
+        user.email
       ]
     );
 
@@ -157,7 +159,7 @@ const newDraft = asyncHandler(async (req, res) => {
 
     // creating draft
     const data = await pool.query(
-      `INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      `INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
       [
         user.email,
         title,
@@ -166,6 +168,7 @@ const newDraft = asyncHandler(async (req, res) => {
         image.filename,
         image.path,
         image.destination,
+        user.email
       ]
     );
 
@@ -236,11 +239,13 @@ const sendFeedback = asyncHandler(async (req, res) => {
 const getUserBlogs = asyncHandler(async (req, res) => {
   try {
     const { username, email } = req.user;
+    console.log(email)
     // query
     const query = `SELECT * FROM blogs WHERE email = $1`;
     // performing query
     const data = await pool.query(query, [email]);
     // if it returns any row then respond to user with the data
+    console.log(data.rows)
     if (data.rows) {
       res.status(200).json(data.rows);
     } else {
@@ -452,6 +457,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   try {
     const { username, bio } = req.body;
     const { email } = req.user;
+    console.log(req.user)
     // performing query
     const data = await pool.query(`SELECT * FROM users WHERE email=$1`, [
       email,
@@ -545,6 +551,30 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 });
 
+const searchBlog = asyncHandler(async (req, res) => {
+  try {
+    const searchTerm = req.params.searchTerm;
+
+    const sqlQuery = `
+  SELECT * FROM blogs
+  WHERE content ILIKE $1
+  OR title ILIKE $1
+  OR tags @> ARRAY[$1]::text[];`;
+  
+    // searching
+    const data = await pool.query(sqlQuery, [`%${searchTerm}%`]);
+    if (data.rowCount > 0) {
+      // sending results to the client
+      res.status(200).json(data.rows);
+    } else {
+      res.status(404).json("Not found");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal server error");
+  }
+});
+
 module.exports = {
   registerUser,
   userLogin,
@@ -566,4 +596,5 @@ module.exports = {
   updateProfile,
   updateAvatar,
   changePassword,
+  searchBlog,
 };

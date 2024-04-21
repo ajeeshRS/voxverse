@@ -20,6 +20,7 @@ const {
   updateProfile,
   updateAvatar,
   changePassword,
+  searchBlog,
 } = require("../controllers/userController");
 const router = express.Router();
 const validateToken = require("../middlewares/tokenValidator");
@@ -172,5 +173,8 @@ router.post(
 
 // change password
 router.put("/change-password", validateToken, changePassword);
+
+// search blog
+router.get("/blogs/search/:searchTerm",searchBlog)
 
 module.exports = router;

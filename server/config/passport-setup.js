@@ -14,12 +14,14 @@ passport.use(
       try {
         let user = await pool.query(
           "SELECT * FROM users WHERE google_id = $1",
-         [ profile.id]
+          [profile.id]
         );
-        if (!user) {
-        
-          await pool.query('INSER INTO users (google_id,username,email) VALUES($1,$2,$3)',[profile.id,profile.displayName,profile.emails[0].value])
-
+        if (user.rowCount === 0) {
+          
+          await pool.query(
+            "INSERT INTO users (google_id,username,email) VALUES($1,$2,$3)",
+            [profile.id, profile.displayName, profile.email]
+          );
         }
 
         return done(null, user.rows[0]);

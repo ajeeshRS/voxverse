@@ -21,7 +21,7 @@ function UpdateprofilePage() {
         `${BASE_URL}/user/update-profile`,
         data,
         {
-          headers: getHeaders(),//including header with token
+          headers: getHeaders(), //including header with token
         }
       );
       reset();
@@ -42,62 +42,62 @@ function UpdateprofilePage() {
           Update Profile
         </h1>
       </div>
-      <div className="mt-20 mx-20 flex justify-center">
-        <form onSubmit={handleSubmit((data) => handleUpdateData(data))}>
-          <div className="flex flex-col items-start">
+      <div className="mt-20 ">
+        <form
+          className="w-full h-[50vh] flex flex-col items-center justify-center"
+          onSubmit={handleSubmit((data) => handleUpdateData(data))}
+        >
+          <div className=" my-2 flex flex-col justify-center relative items-start">
             {/* username */}
             <label
               htmlFor="username"
-              className="font-semibold font-poppins text-sm pl-2 pb-1 "
+              className="font-poppins font-medium pl-2 pb-2"
             >
               Username
             </label>
             <input
               id="username"
-              name="username"
               type="text"
-              placeholder="username"
-              {...register("username", { required: true })}
-              className="md:w-[500px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-4 w-[240px] pr-5"
+              {...register("username")}
+              className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-5 w-[240px] "
+              placeholder="Username"
             />
           </div>
-          <div className="flex flex-col items-start pt-5">
-            {/* Bio */}
-            <label
-              htmlFor="bio"
-              className="font-semibold font-poppins text-sm pl-2 pb-1  "
-            >
+
+          <div className=" my-2 flex flex-col justify-center relative items-start">
+            <label htmlFor="bio" className="font-poppins font-medium pl-2 pb-2">
               Bio
             </label>
+
+            {/* bio */}
             <input
               id="bio"
-              name="bio"
               type="text"
-              placeholder="bio"
-              {...register("bio", { required: true })}
-              className="md:w-[500px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-4 w-[240px] pr-5"
+              {...register("bio")}
+              className="md:w-[350px] bg-[#f5f5f5] h-10 rounded-lg focus:outline-none pl-5 w-[240px] "
+              placeholder="Bio"
             />
           </div>
-          <div className="w-[500px] flex justify-end">
-            <button
-              type="submit"
-              className="bg-black text-white text-xs font-poppins px-2 py-2 rounded-full ml-10 hover:bg-white hover:text-black border-black border-2 transition-all duration-300 mt-8"
-            >
-              Update profile
-            </button>
-            {/* toast container */}
-            <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={true}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              theme="light"
-            />
-          </div>
+
+          {/* update button */}
+          <button
+            type="submit"
+            className="md:w-[350px] h-10 mt-6 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
+          >
+            Update Profile
+          </button>
+          {/* Toast message container */}
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="light"
+          />
         </form>
       </div>
     </div>

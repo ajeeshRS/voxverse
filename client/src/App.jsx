@@ -24,9 +24,11 @@ import UserProfilePage from "./pages/UserProfilePage";
 import UpdateprofilePage from "./pages/UpdateprofilePage";
 import UpdateAvatarPage from "./pages/UpdateAvatarPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import SearchPage from "./pages/SearchPage";
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userState.user);
+  const googleId = user.google_id;
 
   useEffect(() => {
     const fetchAllArticles = async () => {
@@ -50,6 +52,8 @@ function App() {
             withCredentials: true,
           }
         );
+        // console.log(googleResponse.data)
+        localStorage.setItem("token", googleResponse.data.token);
 
         dispatch(setUser(googleResponse.data.user));
       } catch (error) {
@@ -84,7 +88,14 @@ function App() {
       <Route path="/profile" element={<UserProfilePage />} />
       <Route path="/update-profile" element={<UpdateprofilePage />} />
       <Route path="/update-avatar" element={<UpdateAvatarPage />} />
-      <Route path="/change-password" element={<ChangePasswordPage />} />
+
+      <Route
+        path="/change-password"
+        element={googleId ? <NotFoundPage /> : <ChangePasswordPage />}
+      />
+
+      <Route path="/search/:query" element={<SearchPage />} />
+
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

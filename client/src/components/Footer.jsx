@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import facebookIcon from "../assets/Facebook.svg";
 import instagramIcon from "../assets/Instagram.svg";
 import githubIcon from "../assets/Github.svg";
@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 function Footer() {
   // state for setting feedback input field value
   const [feedbackInput, setFeedbackInput] = useState("");
+  const [isBtnEnabled, setIsBtnEnabled] = useState(true);
 
   // function to send feedback
   const handleSubmit = async () => {
@@ -25,10 +26,36 @@ function Footer() {
       if (response.status == 200) {
         notifyFeedbackSend(response.data);
       }
+      
+      setIsBtnEnabled(false);
+
+      localStorage.setItem("feedbackSubmissionTime", Date.now());
+      // setting timer for 5 minutes after submission of feedback
+      setTimeout(() => {
+        setIsBtnEnabled(true);
+      }, 5 * 60 * 1000);
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    const submissionTime = localStorage.getItem("feedbackSubmissionTime");
+    if (submissionTime) {
+      const timeDifference = Date.now() - parseInt(submissionTime, 10);
+      if (timeDifference < 5 * 60 * 1000) {
+        // If less than 5 minutes have passed, disable the button
+        setIsBtnEnabled(false);
+        const remainingTime = 5 * 60 * 1000 - timeDifference;
+        // Set a timer to enable the button after the remaining time
+        setTimeout(() => {
+          setIsBtnEnabled(true);
+          // console.log("Feedback button enabled after remaining time.");
+        }, remainingTime);
+      }
+    }
+  }, []);
+
   return (
     <footer className="w-full sm:h-52 h-auto bg-black flex sm:flex-row gap-5 sm:gap-0 flex-col sm:justify-between sm:items-center items-center  text-white">
       <div className="sm:px-10 px-5 sm:w-2/4 w-4/4 sm:text-start text-center py-5">
@@ -89,10 +116,15 @@ function Footer() {
         <button
           className="w-1/4 h-10 rounded-md bg-white text-black hover:bg-black hover:border-2 hover:border-white hover:text-white transition duration-500 ease-in-out my-3  "
           type="submit"
-          onClick={() => handleSubmit()}
+          disabled={!isBtnEnabled}
+          onClick={() => isBtnEnabled && handleSubmit()}
         >
           Send
         </button>
+        {/* when buttonenabled is false show message to user */}
+        {!isBtnEnabled && (
+            <p className="font-poppins text-xs sm:block hidden">Please wait for 5 minutes before submitting again.</p>
+          )}
         {/* toast container */}
         <ToastContainer
           position="top-center"
@@ -104,8 +136,12 @@ function Footer() {
           pauseOnFocusLoss
           draggable
           theme="light"
-        />
+          />
       </div>
+      {/* message text for mobile devices */}
+          {!isBtnEnabled && (
+            <p className="font-poppins text-xs sm:hidden block">Please wait for 5 minutes before submitting again.</p>
+          )}
       <p className="py-1 mb-2 text-sm sm:hidden block text-center w-full px-10">
         2024 all rights reserved.
       </p>

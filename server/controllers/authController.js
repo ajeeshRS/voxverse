@@ -2,12 +2,26 @@ const asyncHandler = require("express-async-handler");
 const { generateOtp, sendEmail } = require("../helpers/userUtils");
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
+const jwt = require("jsonwebtoken")
 
 const loginSuccess = asyncHandler(async (req, res) => {
   try {
-    // if req.user exist respond with the user login message and the user to the clien
+    
+    // if req.user exist respond with the user login message and the user to the client
     if (req.user) {
-      res.status(200).json({ message: "user Login", user: req.user });
+      // creating jwt token
+      const accessToken = jwt.sign(
+        {
+          user: {
+            username: req.user.username,
+            email: req.user.email,
+          },
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "3d" }
+      );
+
+      res.status(200).json({ message: "user Login", user: req.user,token:accessToken });
     } else {
       // if no user respond with a error message
       res.status(400).json({ message: "Not Authorized" });

@@ -100,16 +100,15 @@ function UserStories() {
       {/* navbar component */}
       <NavBar />
       <div className="pt-20 w-full ">
-        {userBlogs.length > 0 && (
-          <div className="py-5">
-            <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
-              My Stories
-            </p>
-          </div>
-        )}
+        <div className="py-5">
+          <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-white">
+            My Stories
+          </p>
+        </div>
+
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 w-full items-center justify-between sm:h-full sm:pl-10 sm:mb-20 pb-10 pt-8 px-5  ">
           {/* if the articles are there then map and display the details */}
-          {userBlogs ? (
+          {userBlogs.length > 0 ? (
             userBlogs.map((data, index) => (
               <div
                 key={index}
@@ -202,9 +201,9 @@ function UserStories() {
             ))
           ) : (
             // if no articles where found then display the message
-            <div className="flex w-full h-[100vh] justify-center items-center ">
-              <h1 className="font-montserrat font-bold text-lg">
-                No post where created since.
+            <div className="flex w-[90vw] h-[20vh] justify-center items-center ">
+              <h1 className="font-montserrat text-gray-400 font-medium text-lg">
+                No posts where created since.
               </h1>
             </div>
           )}
