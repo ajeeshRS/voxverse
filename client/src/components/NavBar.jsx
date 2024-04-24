@@ -16,6 +16,7 @@ import userAddIcon from "../assets/UserAdd.svg";
 import loginIcon from "../assets/SignIn.svg";
 import writeIcon from "../assets/FileAdd.svg";
 import { setSearchResults } from "../state/slices/SearchSlice";
+import Search from "./Search";
 
 function NavBar() {
   // state for right menu button
@@ -35,24 +36,6 @@ function NavBar() {
 
   // react router dom function to navigate between pages
   const navigate = useNavigate();
-
-  const [searchInput, setSearchInput] = useState(null);
-
-  const onSearch = async () => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/user/blogs/search/${searchInput}`
-      );
-      // If there are results, dispatch them and navigate
-      dispatch(setSearchResults(response.data));
-      navigate(`/search/${encodeURIComponent(searchInput)}`);
-    } catch (error) {
-      console.log(error);
-      if (error.response.status === 404) {
-        navigate(`/search/${encodeURIComponent(searchInput)}`);
-      }
-    }
-  };
 
   // function to fetch user
   const fetchUser = async () => {
@@ -141,28 +124,9 @@ function NavBar() {
           </div>
         </div>
         <div className="flex md:justify-between justify-around items-center  h-20 md:relative">
-          <button
-            className="md:absolute w-[35px] h-[35px] pl-1 cursor-pointer"
-            type="submit"
-          >
-            <img
-              src={SearchSvg}
-              alt=""
-              // className="md:absolute w-[35px] h-[35px] pl-1 cursor-pointer"
-              onClick={() => {
-                onSearch();
-              }}
-            />
-          </button>
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && onSearch()}
-            className="sm:w-52 w-28 bg-[#f5f5f5] h-10 rounded-full focus:outline-none sm:pl-9 pl-4  pr-5"
-            placeholder="Search..."
-          />
+          {/* search component */}
 
+          <Search />
           <div className="flex justify-around items-center md:w-48 h-20 mx-4 ">
             {Object.keys(user).length !== 0 ? (
               <>
