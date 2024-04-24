@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SearchSvg from "../assets/Search.svg";
 import Hamburger from "../assets/Sort.svg";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,6 +20,9 @@ import { setSearchResults } from "../state/slices/SearchSlice";
 function NavBar() {
   // state for right menu button
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const menuButtonRef = useRef(null);
+  const menuRef = useRef(null);
 
   // state for left hamburger button
   const isClicked = useSelector((state) => state.toggleMenu.value);
@@ -75,6 +78,25 @@ function NavBar() {
     userNameArray = userName.split("");
     userFirstLetter = userNameArray[0].toUpperCase();
   }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(event.target)
+      ) {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   // fetch user on component mount
   useEffect(() => {
@@ -148,6 +170,7 @@ function NavBar() {
                   <button
                     className="sm:block hidden p-2 rounded-full bg-gray-200 w-14 h-14 hover:bg-gray-300 focus:outline-none relative overflow-hidden"
                     // opening and closing of right side menu
+                    ref={menuButtonRef}
                     onClick={() => setMenuOpen(!menuOpen)}
                   >
                     {user.avatar ? (
@@ -164,7 +187,10 @@ function NavBar() {
                   </button>
                   {/* if menu button is clicked then display the options */}
                   {menuOpen && (
-                    <div className="absolute right-0 mt-6 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                    <div
+                      ref={menuRef}
+                      className="absolute right-0 mt-6 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1"
+                    >
                       {/* Options content here */}
                       <ul>
                         <li

@@ -49,11 +49,9 @@ const userLogin = asyncHandler(async (req, res) => {
     if (!email || !password) {
       return res.status(400).json("All fields are mandatory");
     }
-
+    const query = "SELECT * FROM users WHERE email = $1";
     // Checking user existence
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+    const user = await pool.query(query, [email]);
 
     const userPassword = user.rows[0].password;
 
@@ -82,11 +80,9 @@ const userLogin = asyncHandler(async (req, res) => {
 const getUserInfo = asyncHandler(async (req, res) => {
   try {
     const user = req.user;
-
-    const data = await pool.query(
-      `SELECT username,email,bio,avatar,google_id FROM users WHERE email=$1`,
-      [user.email]
-    );
+    const query =
+      "SELECT username,email,bio,avatar,google_id FROM users WHERE email=$1";
+    const data = await pool.query(query, [user.email]);
     // if the user exist send the user to the client
     if (data.rowCount > 0) {
       const formatedData = {
@@ -94,7 +90,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
         bio: data.rows[0].bio,
         email: data.rows[0].email,
         avatar: data.rows[0].avatar,
-        google_id:data.rows[0].google_id?data.rows[0].google_id:null
+        google_id: data.rows[0].google_id ? data.rows[0].google_id : null,
       };
 
       res.status(200).json(formatedData);
@@ -117,21 +113,19 @@ const newBlog = asyncHandler(async (req, res) => {
     const user = req.user;
 
     // console.log(user);
-
+    const query =
+      "INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)";
     // creating  new blog
-    const data = await pool.query(
-      `INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-      [
-        user.username,
-        title,
-        content,
-        tags,
-        image.filename,
-        image.path,
-        image.destination,
-        user.email
-      ]
-    );
+    const data = await pool.query(query, [
+      user.username,
+      title,
+      content,
+      tags,
+      image.filename,
+      image.path,
+      image.destination,
+      user.email,
+    ]);
 
     // if it return any rows then the blog is added
     if (data.rowCount > 0) {
@@ -156,21 +150,19 @@ const newDraft = asyncHandler(async (req, res) => {
     const user = req.user;
 
     // console.log(user);
-
+    const query =
+      "INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)";
     // creating draft
-    const data = await pool.query(
-      `INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-      [
-        user.email,
-        title,
-        content,
-        tags,
-        image.filename,
-        image.path,
-        image.destination,
-        user.email
-      ]
-    );
+    const data = await pool.query(query, [
+      user.email,
+      title,
+      content,
+      tags,
+      image.filename,
+      image.path,
+      image.destination,
+      user.email,
+    ]);
 
     // if it return any rows then the blog is added
     if (data.rowCount > 0) {
@@ -239,13 +231,13 @@ const sendFeedback = asyncHandler(async (req, res) => {
 const getUserBlogs = asyncHandler(async (req, res) => {
   try {
     const { username, email } = req.user;
-    console.log(email)
+    // console.log(email);
     // query
     const query = `SELECT * FROM blogs WHERE email = $1`;
     // performing query
     const data = await pool.query(query, [email]);
     // if it returns any row then respond to user with the data
-    console.log(data.rows)
+    // console.log(data.rows);
     if (data.rows) {
       res.status(200).json(data.rows);
     } else {
@@ -329,11 +321,18 @@ const updateBlogs = asyncHandler(async (req, res) => {
     const { title, content, tags } = req.body;
     const image = req.file;
 
+    const query =
+      "UPDATE blogs SET title=$1,content=$2,tags=$3,image_filename=$4,image_path=$5,image_destination=$6 WHERE id = $7";
     // Updating  blog
-    const data = await pool.query(
-      `UPDATE blogs SET title=$1,content=$2,tags=$3,image_filename=$4,image_path=$5,image_destination=$6 WHERE id = $7`,
-      [title, content, tags, image.filename, image.path, image.destination, id]
-    );
+    const data = await pool.query(query, [
+      title,
+      content,
+      tags,
+      image.filename,
+      image.path,
+      image.destination,
+      id,
+    ]);
     // if updated respond with proper success message
     if (data.rowCount > 0) {
       res.status(200).json("Blog updated");
@@ -350,18 +349,15 @@ const updateBlogs = asyncHandler(async (req, res) => {
 const addBookmark = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    const user = req.user;
+    const { email } = req.user;
     // console.log(id, user);
+    const query = "SELECT * FROM Bookmark WHERE BlogID=$1 AND userid = $2";
     // checking for blog in db
-    const row = await pool.query(`SELECT * FROM Bookmark WHERE BlogID=$1`, [
-      id,
-    ]);
+    const row = await pool.query(query, [id, email]);
     // if no row where found add to bookmark
     if (row.rowCount == 0) {
-      const data = await pool.query(
-        `INSERT INTO Bookmark (UserID,BlogID) VALUES($1,$2)`,
-        [user.email, id]
-      );
+      const query1 = "INSERT INTO Bookmark (UserID,BlogID) VALUES($1,$2)";
+      const data = await pool.query(query1, [email, id]);
       // if any row is affected  respond with success status code and message
       if (data.rowCount > 0) {
         console.log("added");
@@ -381,18 +377,14 @@ const addBookmark = asyncHandler(async (req, res) => {
 const removeFromBookmarks = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    const user = req.user;
-
+    const {email} = req.user;
+    const query = "SELECT * FROM Bookmark WHERE BlogID=$1 AND userid =$2";
     // getting the blog with id
-    const exist = await pool.query(`SELECT * FROM Bookmark WHERE BlogID=$1`, [
-      id,
-    ]);
+    const exist = await pool.query(query, [id,email]);
     if (exist.rowCount) {
+      const query1 = "DELETE FROM Bookmark WHERE BlogID=$1 AND UserID=$2";
       // if it exist remove from db
-      const data = await pool.query(
-        `DELETE FROM Bookmark WHERE BlogID=$1 AND UserID=$2`,
-        [id, user.email]
-      );
+      const data = await pool.query(query1, [id,email]);
       // if it return any row respond with status code and message
       if (data.rowCount > 0) {
         res.status(200).json("Removed from bookmarks");
@@ -411,12 +403,13 @@ const removeFromBookmarks = asyncHandler(async (req, res) => {
 const checkBookmark = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    // console.log(id);
+    console.log(id);
+    const { email } = req.user;
+    console.log(email);
     // getting the blog from the bookmark
-    const data = await pool.query(`SELECT * FROM Bookmark WHERE BlogID =$1`, [
-      id,
-    ]);
-    // console.log(data.rows)
+    const query = "SELECT * FROM Bookmark WHERE BlogID =$1 AND userid =$2";
+    const data = await pool.query(query, [id, email]);
+    console.log(data.rows);
     // if it is in the bookmark then respond true
     if (data.rowCount > 0) {
       res.status(200).json(true);
@@ -433,11 +426,9 @@ const getBookmarks = asyncHandler(async (req, res) => {
   try {
     const user = req.user;
     // console.log(user)
-
+    const query = "SELECT * FROM Bookmark WHERE UserID = $1";
     // getting the blogs for the user from the bookmarks
-    const data = await pool.query(`SELECT * FROM Bookmark WHERE UserID = $1`, [
-      user.email,
-    ]);
+    const data = await pool.query(query, [user.email]);
 
     // if it returns any rows respond with the data
     if (data.rowCount) {
@@ -457,27 +448,28 @@ const updateProfile = asyncHandler(async (req, res) => {
   try {
     const { username, bio } = req.body;
     const { email } = req.user;
-    console.log(req.user)
+    // console.log(req.user);
+    const query = "SELECT * FROM users WHERE email=$1";
+
     // performing query
-    const data = await pool.query(`SELECT * FROM users WHERE email=$1`, [
-      email,
-    ]);
+    const data = await pool.query(query, [email]);
     // if it returns any row update the row with new info
     if (data.rowCount > 0) {
       if (username || bio) {
-        const data = await pool.query(
-          `UPDATE users SET username=$1 WHERE email=$2`,
-          [username, email]
-        );
-        const response = await pool.query(
-          `UPDATE users SET bio=$1 WHERE email=$2`,
-          [bio, email]
-        );
+        const updateUsernameQuery =
+          "UPDATE users SET username=$1 WHERE email=$2";
+        const data = await pool.query(updateUsernameQuery, [username, email]);
+
+        const updateBioQuery = "UPDATE users SET bio=$1 WHERE email=$2";
+        const response = await pool.query(updateBioQuery, [bio, email]);
+
+        const updateBlogUsernameQuery =
+          "UPDATE blogs SET user_id=$1 WHERE email=$2";
         // also updates the username in the blogs db
-        const result = await pool.query(
-          `UPDATE blogs SET user_id=$1 WHERE email=$2`,
-          [username, email]
-        );
+        const result = await pool.query(updateBlogUsernameQuery, [
+          username,
+          email,
+        ]);
 
         if (data.rowCount > 0 || response.rowCount > 0) {
           res.status(200).json("Details updated");
@@ -496,11 +488,10 @@ const updateAvatar = asyncHandler(async (req, res) => {
   try {
     const image = req.file;
     const { email } = req.user;
+
+    const query = "UPDATE users SET avatar=$1 WHERE email=$2";
     // performing query
-    const data = await pool.query(
-      `UPDATE users SET avatar=$1 WHERE email=$2 `,
-      [image.filename, email]
-    );
+    const data = await pool.query(query, [image.filename, email]);
     // if it returns any row respond with message
     if (data.rowCount > 0) {
       res.status(200).json("Avatar updated");
@@ -518,10 +509,9 @@ const changePassword = asyncHandler(async (req, res) => {
     const { currentPassword, password } = req.body;
     const user = req.user;
 
+    const query = "SELECT * FROM users WHERE email=$1";
     // checking db for the user
-    const data = await pool.query(`SELECT * FROM users WHERE email=$1`, [
-      user.email,
-    ]);
+    const data = await pool.query(query, [user.email]);
 
     if (!data.rowCount > 0) {
       console.log("user not found");
@@ -535,10 +525,9 @@ const changePassword = asyncHandler(async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const updatePasswordQuery = "UPDATE users SET Password=$1";
     // updates the current password with new hashed password
-    const response = await pool.query(`UPDATE users SET Password=$1`, [
-      hashedPassword,
-    ]);
+    const response = await pool.query(updatePasswordQuery, [hashedPassword]);
 
     if (!response.rowCount > 0) {
       return res.status(400).json("Unable to update password");
@@ -555,14 +544,14 @@ const searchBlog = asyncHandler(async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
 
-    const sqlQuery = `
+    const query = `
   SELECT * FROM blogs
   WHERE content ILIKE $1
   OR title ILIKE $1
   OR tags @> ARRAY[$1]::text[];`;
-  
+
     // searching
-    const data = await pool.query(sqlQuery, [`%${searchTerm}%`]);
+    const data = await pool.query(query, [`%${searchTerm}%`]);
     if (data.rowCount > 0) {
       // sending results to the client
       res.status(200).json(data.rows);

@@ -12,16 +12,17 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await pool.query(
-          "SELECT * FROM users WHERE google_id = $1",
-          [profile.id]
-        );
+        const query = "SELECT * FROM users WHERE google_id = $1";
+        let user = await pool.query(query, [profile.id]);
+
         if (user.rowCount === 0) {
-          
-          await pool.query(
-            "INSERT INTO users (google_id,username,email) VALUES($1,$2,$3)",
-            [profile.id, profile.displayName, profile.email]
-          );
+          const insertQuery =
+            "INSERT INTO users (google_id,username,email) VALUES($1,$2,$3)";
+          await pool.query(insertQuery, [
+            profile.id,
+            profile.displayName,
+            profile.email,
+          ]);
         }
 
         return done(null, user.rows[0]);

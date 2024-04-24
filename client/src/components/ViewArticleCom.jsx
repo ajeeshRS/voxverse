@@ -15,6 +15,9 @@ import {
 import { ToastContainer } from "react-toastify";
 
 function ViewArticleCom() {
+  // getting user info
+  const user = useSelector((state) => state.userState.user);
+
   // Extracting id from the url using the useParams() hook
   const { id } = useParams();
 
@@ -42,6 +45,7 @@ function ViewArticleCom() {
           headers: getHeaders(),
         }
       );
+      console.log(res.data);
       // show toast message
       notifyAddBookmark();
       setIsBookmarked(true); // Update isBookmarked state
@@ -55,6 +59,7 @@ function ViewArticleCom() {
       const res = await axios.delete(`${BASE_URL}/user/bookmark/delete/${id}`, {
         headers: getHeaders(),
       });
+      console.log(res.data);
       // show toast message
       notifyRemoveFromBookmarks();
       setIsBookmarked(false); // Update isBookmarked state
@@ -62,12 +67,6 @@ function ViewArticleCom() {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (blogData.length > 0) {
-      setLoading(false); // Set loading to false once data is loaded
-    }
-  }, [blogData]);
 
   // function to fetch all blogs
   const fetchBlogs = async () => {
@@ -80,16 +79,6 @@ function ViewArticleCom() {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    // Fetch blog data only if it's not available
-    if (blogData.length === 0) {
-      fetchBlogs();
-    } else {
-      // If blog data is already available, set loading to false
-      setLoading(false);
-    }
-  }, []);
 
   // Use isBookmarked state to determine which icon to display
   const bookmarkIcon = isBookmarked ? removeIcon : addIcon;
@@ -104,6 +93,24 @@ function ViewArticleCom() {
       addToBookmarks(id);
     }
   };
+
+  // for setting loading false when data is loaded
+  useEffect(() => {
+    if (blogData.length > 0) {
+      setLoading(false);
+    }
+  }, [blogData]);
+
+  // To fetch blog when its length = 0
+  useEffect(() => {
+    // Fetch blog data only if it's not available
+    if (blogData.length === 0) {
+      fetchBlogs();
+    } else {
+      // If blog data is already available, set loading to false
+      setLoading(false);
+    }
+  }, []);
 
   // checking the bookmark
   useEffect(() => {
@@ -164,12 +171,14 @@ function ViewArticleCom() {
                   {data.user_id.toUpperCase()}
                 </p>
                 <p className="text-gray-600">{formatDate(data.created_at)}</p>
-                <button onClick={handleToggleBookmark}>
-                  <img
-                    src={bookmarkIcon}
-                    alt={isBookmarked ? "remove-icon" : "add-icon"}
-                  />
-                </button>
+                {Object.keys(user).length !== 0 && (
+                  <button onClick={handleToggleBookmark}>
+                    <img
+                      src={bookmarkIcon}
+                      alt={isBookmarked ? "remove-icon" : "add-icon"}
+                    />
+                  </button>
+                )}
                 {/* toast container*/}
                 <ToastContainer
                   position="top-center"
@@ -202,7 +211,7 @@ function ViewArticleCom() {
         // if no articles where found display the message
         <div className="flex w-full h-[100vh] justify-center items-center ">
           <h1 className="font-montserrat font-bold text-lg">
-             Article not found
+            Article not found
           </h1>
         </div>
       )}
