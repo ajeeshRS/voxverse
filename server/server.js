@@ -17,12 +17,12 @@ require("./config/passport-setup");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const url = "http://localhost"
 
+const url = process.env.CLIENT_URL
 // cors middleware options
 app.use(
   cors({
-    origin:process.env.CLIENT_URL,
+    origin:url,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
