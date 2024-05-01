@@ -82,12 +82,49 @@ function App() {
       <Route path="/new-post" element={<NewPostPage />} />
       <Route path="/articles" element={<AllArticles />} />
       <Route path="/articles/:name/:id" element={<ViewArticle />} />
-      <Route path="/my-stories" element={<UserStories />} />
+      <Route
+        path="/my-stories"
+        element={
+          Object.keys(user).length !== 0 ? <UserStories /> : <NotFoundPage />
+        }
+      />
       <Route path="/my-stories/edit/:id" element={<EditPostPage />} />
-      <Route path="/bookmarks" element={<BookmarkPage />} />
-      <Route path="/profile" element={<UserProfilePage />} />
-      <Route path="/update-profile" element={<UpdateprofilePage />} />
-      <Route path="/update-avatar" element={<UpdateAvatarPage />} />
+      <Route
+        path="/bookmarks"
+        element={
+          Object.keys(user).length !== 0 ? <BookmarkPage /> : <NotFoundPage />
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          Object.keys(user).length !== 0 ? (
+            <UserProfilePage />
+          ) : (
+            <NotFoundPage />
+          )
+        }
+      />
+      <Route
+        path="/update-profile"
+        element={
+          Object.keys(user).length !== 0 ? (
+            <UpdateprofilePage />
+          ) : (
+            <NotFoundPage />
+          )
+        }
+      />
+      <Route
+        path="/update-avatar"
+        element={
+          Object.keys(user).length !== 0 ? (
+            <UpdateAvatarPage />
+          ) : (
+            <NotFoundPage />
+          )
+        }
+      />
 
       <Route
         path="/change-password"

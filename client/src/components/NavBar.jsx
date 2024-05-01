@@ -217,26 +217,28 @@ function NavBar() {
             <img src={fileIcon} alt="article-logo" className="pr-5  " />
             <Link to="/articles">Articles</Link>
           </li>
-          <li
-            className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
-            onClick={() => {
-              dispatch(toggle());
-            }}
-          >
-            <img src={fileIcon} alt="my-story-logo" className="pr-5  " />
-            <Link to="/my-stories">My Stories</Link>
-          </li>
 
           {Object.keys(user).length !== 0 ? (
-            <li
-              className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
-              onClick={() => {
-                dispatch(toggle());
-              }}
-            >
-              <img src={writeIcon} alt="write-logo" className="pr-5" />
-              <Link to="/new-post">Write</Link>
-            </li>
+            <>
+              <li
+                className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
+                onClick={() => {
+                  dispatch(toggle());
+                }}
+              >
+                <img src={fileIcon} alt="my-story-logo" className="pr-5  " />
+                <Link to="/my-stories">My Stories</Link>
+              </li>
+              <li
+                className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
+                onClick={() => {
+                  dispatch(toggle());
+                }}
+              >
+                <img src={writeIcon} alt="write-logo" className="pr-5" />
+                <Link to="/new-post">Write</Link>
+              </li>
+            </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={userAddIcon} alt="user-add-logo" className="pr-5" />
@@ -244,36 +246,38 @@ function NavBar() {
             </li>
           )}
 
-          <li
-            className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
-            onClick={() => {
-              dispatch(toggle());
-            }}
-          >
-            <img src={bookmarkIcon} alt="bookmark-logo" className="pr-5 " />
-            <Link to="/bookmarks">Bookmarks</Link>
-          </li>
-          <li
-            className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
-            onClick={() => {
-              dispatch(toggle());
-            }}
-          >
-            <img src={userIcon} alt="profile-logo" className="pr-5 " />
-            <Link to="/profile">Profile</Link>
-          </li>
           {Object.keys(user).length !== 0 ? (
-            <li
-              onClick={() => {
-                localStorage.clear();
-                window.open(`${BASE_URL}/auth/logout`);
-                dispatch(setUser({}));
-              }}
-              className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
-            >
-              <img src={logoutIcon} alt="logout-logo" className="pr-5" />
-              <Link to="/login">Log out</Link>
-            </li>
+            <>
+              <li
+                className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
+                onClick={() => {
+                  dispatch(toggle());
+                }}
+              >
+                <img src={bookmarkIcon} alt="bookmark-logo" className="pr-5 " />
+                <Link to="/bookmarks">Bookmarks</Link>
+              </li>
+              <li
+                className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
+                onClick={() => {
+                  dispatch(toggle());
+                }}
+              >
+                <img src={userIcon} alt="profile-logo" className="pr-5 " />
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li
+                onClick={() => {
+                  localStorage.clear();
+                  window.open(`${BASE_URL}/auth/logout`);
+                  dispatch(setUser({}));
+                }}
+                className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
+              >
+                <img src={logoutIcon} alt="logout-logo" className="pr-5" />
+                <Link to="/login">Log out</Link>
+              </li>
+            </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={loginIcon} alt="login-logo" className="pr-5" />
