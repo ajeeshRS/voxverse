@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { BASE_URL } from "../helpers/urls";
 import { formatDate } from "../helpers/userHelpers";
 import addIcon from "../assets/Bookmark.svg";
-import removeIcon from "../assets/BookmarkOpen.svg";
+import removeIcon from "../assets/BookmarkClose.svg";
 import axios from "axios";
 import { setAllBlogs } from "../state/slices/AllBlogSlice";
 import { getHeaders } from "../helpers/getHeaders";
