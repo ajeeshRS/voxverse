@@ -5,6 +5,7 @@ import { BASE_URL } from "../helpers/urls";
 import {
   notifyBlogCreation,
   notifyBlogDraftCreation,
+  notifyTagErr,
 } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
 import backicon from "../assets/back.svg";
@@ -152,7 +153,7 @@ function NewPostPage() {
           {/* save draft button */}
           <button
             type="submit"
-            onClick={handleSubmit((data, e) => submitDraft(data, e))}
+            onClick={handleSubmit((data, e) => tags.length !== 0 ? submitDraft(data, e):notifyTagErr())}
             className=" mx-3 rounded-full text-white px-3  bg-red-500  hover:bg-red-600 text-sm w-auto h-[35px]"
           >
             Save draft
@@ -160,7 +161,7 @@ function NewPostPage() {
           {/* publish button */}
           <button
             type="submit"
-            onClick={handleSubmit((data, e) => onSubmit(data, e))}
+            onClick={handleSubmit((data, e) =>tags.length!==0 ? onSubmit(data, e):notifyTagErr())}
             disabled={formState.isSubmitting}
             className="mx-3 rounded-full text-white px-3 bg-black hover:bg-[#262626] text-sm w-auto h-[35px]"
           >
