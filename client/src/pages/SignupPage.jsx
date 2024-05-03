@@ -57,10 +57,11 @@ function SignupPage() {
       }
     }
   };
+  const baseurl = window.location.protocol +'//voxverse.onrender.com'
 
   // for opening google account login
   const googleAuth = () => {
-    window.open(`${BASE_URL}/auth/google/callback`, "_self");
+    window.open(`${baseurl}/auth/google/callback`, "_self");
   };
 
   return (
