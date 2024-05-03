@@ -192,7 +192,7 @@ function SignupPage() {
           </div>
 
           {/* Sign up with google button */}
-          <div className="flex w-full h-[40px] md:mt-8 mt-5 items-center justify-center">
+          <div className="hidden w-full h-[40px] md:mt-8 mt-5 items-center justify-center">
             <button
               className="bg-[#f5f5f5] hover:bg-[rgb(238,238,238)] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg"
               onClick={() => googleAuth()}
