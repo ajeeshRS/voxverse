@@ -60,7 +60,7 @@ function SignupPage() {
 
   // for opening google account login
   const googleAuth = () => {
-    window.open(`${BASE_URL}/auth/google/callback`, "_self");
+    window.open(`https://voxverse.netlify.app/auth/google/callback`, "_self");
   };
 
   return (
