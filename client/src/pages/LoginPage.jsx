@@ -150,13 +150,13 @@ function LoginPage() {
             </span>
           </p>
           {/* Divider */}
-          <div className=" flex items-center md:pt-8 pt-10 justify-center h-5">
+          <div className=" hidden items-center md:pt-8 pt-10 justify-center h-5">
             <div className="bg-gray-400 w-[100px] h-[1px]"></div>
             <div className="mx-3 text-gray-500">OR</div>
             <div className="bg-gray-400 w-[100px] h-[1px]"></div>
           </div>
           {/* Login with google button */}
-          <div className="hidden w-full h-[40px] md:mt-8 mt-10 items-center justify-center">
+          <div className="hidden  w-full h-[40px] md:mt-8 mt-10 items-center justify-center">
             <button
               className="bg-[#f5f5f5] hover:bg-[#eeeeee] hover:shadow-sm flex items-center justify-center md:w-1/2 w-[240px] h-full rounded-lg"
               onClick={() => googleAuth()}

@@ -185,7 +185,7 @@ function SignupPage() {
           </p>
 
           {/* Divider */}
-          <div className=" flex items-center pt-8 justify-center h-5">
+          <div className=" hidden items-center pt-8 justify-center h-5">
             <div className="bg-gray-400 w-[100px] h-[1px]"></div>
             <div className="mx-3 text-gray-500 text-xs">OR</div>
             <div className="bg-gray-400 w-[100px] h-[1px]"></div>
