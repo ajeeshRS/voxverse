@@ -339,6 +339,18 @@ const notifyTagErr = () => {
     theme: "light",
   });
 };
+const notifySearchInputErr = () => {
+  toast.error("Enter some keywords to search.", {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
 
 export {
   notifyAccountCreation,
@@ -367,5 +379,6 @@ export {
   notifyUpdatePassword,
   notifyErrUpdatePassword,
   notifyErrCheckPassword,
-  notifyTagErr
+  notifyTagErr,
+  notifySearchInputErr
 };

@@ -4,10 +4,11 @@ import { setSearchResults } from "../state/slices/SearchSlice";
 import { useNavigate } from "react-router";
 import SearchSvg from "../assets/Search.svg";
 import { BASE_URL } from "../helpers/urls";
+import { notifySearchInputErr } from "../helpers/toastify";
 import axios from "axios";
+import { ToastContainer } from "react-toastify";
 
 function Search() {
-  
   const [searchInput, setSearchInput] = useState(null);
 
   const dispatch = useDispatch();
@@ -15,15 +16,19 @@ function Search() {
 
   const onSearch = async () => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/user/blogs/search/${searchInput}`
-      );
-      // If there are results, dispatch them and navigate
-      dispatch(setSearchResults(response.data));
-      navigate(`/search/${encodeURIComponent(searchInput)}`);
+      if (searchInput !== null) {
+        const response = await axios.get(
+          `${BASE_URL}/user/blogs/search/${searchInput}`
+        );
+        // If there are results, dispatch them and navigate
+        dispatch(setSearchResults(response.data));
+        navigate(`/search/${encodeURIComponent(searchInput)}`);
+      } else {
+        notifySearchInputErr();
+      }
     } catch (error) {
       console.log(error);
-      
+
       if (error.response.status === 404) {
         navigate(`/search/${encodeURIComponent(searchInput)}`);
       }
@@ -38,12 +43,23 @@ function Search() {
       >
         <img
           src={SearchSvg}
-          alt=""
+          alt="search-icon"
           onClick={() => {
             onSearch();
           }}
         />
       </button>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        theme="light"
+      />
       <input
         type="text"
         value={searchInput}
