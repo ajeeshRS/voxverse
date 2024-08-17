@@ -19,7 +19,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: true,
     ca: fs
-      .readFileSync(path.resolve(__dirname, process.env.CA_PATH))
+      .readFileSync(path.resolve(__dirname, process.env.CA_PATH || "./ca.pem"))
       .toString(),
   },
 });
