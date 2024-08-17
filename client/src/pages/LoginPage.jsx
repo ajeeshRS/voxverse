@@ -23,7 +23,7 @@ function LoginPage() {
     email: z.string().email(),
     password: z.string().min(1, "Password cannot be empty"),
   });
-  // Useform components
+
   const {
     register,
     handleSubmit,
@@ -39,19 +39,13 @@ function LoginPage() {
 
   const handleLogin = async (data) => {
     try {
-      // Login request 
       const response = await axios.post(`${BASE_URL}/user/login`, data);
-      // setting the access token in the localstorage
       localStorage.setItem("token", response.data.accessToken);
 
-      // Fetch user info using the token
       const userResponse = await axios.get(`${BASE_URL}/user/get`,{headers:getHeaders()});
-
-      // Update user state with fetched user info
       dispatch(setUser(userResponse.data));
-      // Navigate to the home page
-      navigate("/");
 
+      navigate("/");
     } catch (err) {
       console.log(err);
       if(err.response.status == 401){

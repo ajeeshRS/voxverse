@@ -9,39 +9,47 @@ import trashIcon from "../assets/Trash.svg";
 import editIcon from "../assets/Edit.svg";
 import { notifyBlogDeletion, notifyBlogDeletionErr } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
+import Loader from "../components/Loader";
+
 function UserStories() {
   const [userBlogs, setUserBlogs] = useState([]);
   const [userDrafts, setUserDrafts] = useState([]);
   const [menuOpen, setMenuOpen] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
-  // function to fetch user blogs
   const fetchUserBlogs = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${BASE_URL}/user/get/user-blogs`, {
         // including authorization header
         headers: getHeaders(),
       });
+      setLoading(false);
       // setting user blog state
       setUserBlogs(response.data);
 
       setMenuOpen(Array(response.data.length).fill(false));
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
-  //function to fetch drafts by the user
   const fetchUserDrafts = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${BASE_URL}/user/get/user-drafts`, {
         // including authorization header
         headers: getHeaders(),
       });
+      setLoading(false);
       // setting user draft state
       setUserDrafts(response.data);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -54,7 +62,6 @@ function UserStories() {
     });
   };
 
-  // handling delete
   const handleDelete = async (id) => {
     try {
       // sending DELETE request to backend
@@ -80,17 +87,14 @@ function UserStories() {
     }
   };
 
-  // fetch blog on component load
   useEffect(() => {
     fetchUserBlogs();
   }, []);
 
-  // fetch drafts on component load
   useEffect(() => {
     fetchUserDrafts();
   }, []);
 
-  // Scroll to the top of the page when component mounts or content changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -116,7 +120,7 @@ function UserStories() {
               >
                 <img
                   className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                  src={`${BASE_URL}/uploads/${data.image_filename}`}
+                  src={data.image_path}
                   alt="featured-image"
                 />
 
@@ -199,7 +203,10 @@ function UserStories() {
                 </div>
               </div>
             ))
-          ) : (
+          ) : ( loading ? 
+              <div className="flex w-[95vw] h-[20vh] justify-center items-center ">
+                <Loader />
+              </div> :
             // if no articles where found then display the message
             <div className="flex w-[90vw] h-[20vh] justify-center items-center ">
               <h1 className="font-montserrat text-gray-400 font-medium text-lg">
@@ -226,7 +233,7 @@ function UserStories() {
             >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                src={`${BASE_URL}/uploads/${data.image_filename}`}
+                src={data.image_path}
                 alt="featured-image"
               />
 
@@ -259,7 +266,7 @@ function UserStories() {
           // if no articles where found then display the message
           <div className="flex w-[95vw] h-[20vh] justify-center items-center ">
             <h1 className="font-poppins text-lg text-gray-400">
-              {userBlogs.length == null ? "Nothing here !" : null}
+              {userBlogs.length == null && "Nothing here !"}
             </h1>
           </div>
         )}

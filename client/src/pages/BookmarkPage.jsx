@@ -9,11 +9,15 @@ import { useSelector } from "react-redux";
 import trashIcon from "../assets/Trash.svg";
 import { notifyRemoveFromBookmarks } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
+import Loader from "../components/Loader";
 
 function BookmarkPage() {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
+  const [loading, setLoading] = useState([]);
+
   const blogs = useSelector((state) => state.allBlogState.allBlogs);
 
   const bookmarkedIds = bookmarks.map((obj) => obj["blogid"]); //extracting ids from the row
@@ -28,11 +32,9 @@ function BookmarkPage() {
     });
   };
 
-  // handling remove from bookmarks
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(`${BASE_URL}/user/bookmark/delete/${id}`, {
-        // including auth header
         headers: getHeaders(),
       });
       notifyRemoveFromBookmarks();
@@ -46,15 +48,21 @@ function BookmarkPage() {
 
   useEffect(() => {
     const fetchBlogs = async () => {
-      const response = await axios.get(`${BASE_URL}/user/get/bookmarks`, {
-        headers: getHeaders(),
-      });
-      setBookmarks(response.data);
+      try {
+        setLoading(true);
+        const response = await axios.get(`${BASE_URL}/user/get/bookmarks`, {
+          headers: getHeaders(),
+        });
+        setBookmarks(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
     };
     fetchBlogs();
   }, []);
 
-  // Scroll to the top of the page when component mounts or content changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -143,6 +151,10 @@ function BookmarkPage() {
                 </div>
               </div>
             ))
+          ) : loading ? (
+            <div className="flex w-[95vw] h-[50vh] justify-center items-center ">
+              <Loader />
+            </div>
           ) : (
             // if no articles where found then display the message
             <div className="flex w-[95vw] h-[50vh] justify-center items-center ">

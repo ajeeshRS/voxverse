@@ -63,7 +63,7 @@ function UserProfilePage() {
             <button className="sm:block p-2 font-poppins font-semibold text-lg rounded-full bg-gray-200 w-20 h-20 hover:bg-gray-300 focus:outline-none">
               {user.avatar ? (
                 <img
-                  src={`${BASE_URL}/uploads/${user.avatar}`}
+                  src={user.avatar}
                   alt="image-preview"
                   className="w-full h-full object-cover rounded-full"
                 />

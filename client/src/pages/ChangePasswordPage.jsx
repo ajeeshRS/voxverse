@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import arrowLeftIcon from "../assets/Arrowleft.svg";
 import { useNavigate } from "react-router";
 import passwordIcon from "../assets/Password.svg";
 import { ToastContainer } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -14,9 +14,12 @@ import {
   notifyErrUpdatePassword,
   notifyUpdatePassword,
 } from "../helpers/toastify";
+import Loader from "../components/Loader";
 
 function ChangePasswordPage() {
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
 
   //   defining schema for zod input validation
   const schema = z
@@ -46,6 +49,7 @@ function ChangePasswordPage() {
 
   const handleUpdatePassword = async (data) => {
     try {
+      setLoading(true);
       const response = await axios.put(
         `${BASE_URL}/user/change-password`,
         data,
@@ -53,12 +57,14 @@ function ChangePasswordPage() {
           headers: getHeaders(), //including auth header with token
         }
       );
+      setLoading(false);
       console.log(response.data);
       // reseting form
       reset();
       notifyUpdatePassword();
     } catch (error) {
       console.log(error);
+      setLoading(false);
       //  if the current password is incorrect show the message
       if (error.response.status == 401) {
         notifyErrCheckPassword();
@@ -144,9 +150,9 @@ function ChangePasswordPage() {
         {/* change button */}
         <button
           type="submit"
-          className="md:w-[350px] h-10 mt-6 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
+          className="md:w-[350px] h-10 mt-6 rounded-lg flex justify-center items-center bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
         >
-          Change password
+          {loading ? <Loader /> : "Change password"}
         </button>
         {/* Toast message container */}
         <ToastContainer

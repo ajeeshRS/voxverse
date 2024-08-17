@@ -11,18 +11,20 @@ import { ToastContainer } from "react-toastify";
 import backicon from "../assets/back.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getHeaders } from "../helpers/getHeaders";
+import Loader from "../components/Loader";
+
 function NewPostPage() {
-  // React hook form
   const { register, handleSubmit, formState, reset, setValue } = useForm();
   const location = useLocation();
   const article = location.state && location.state.article;
 
   const navigate = useNavigate();
-  // tags
-  const [tags, setTags] = useState([]);
 
-  // tag input handle state
+  const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [loadingDraftSub, setLoadingDraftSub] = useState(false);
 
   // To handle tag input change
   const handleTagInputChange = (e) => {
@@ -40,22 +42,23 @@ function NewPostPage() {
     }
   };
 
-  // To handle tag removal
   const handleRemoveTag = (tagToRemove, e) => {
     e.preventDefault();
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  // function to delete draft by id
   const deleteDraft = async (id) => {
     try {
+      setLoading(true);
       // requesting for delete draft
       const data = await axios.delete(`${BASE_URL}/user/delete-draft/${id}`, {
         // including authorization header
         headers: getHeaders(),
       });
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -73,6 +76,7 @@ function NewPostPage() {
     });
 
     try {
+      setLoading(true);
       // sending data to the backend
       const res = await axios.post(`${BASE_URL}/user/new-blog`, formData, {
         headers: {
@@ -80,6 +84,7 @@ function NewPostPage() {
           "Content-Type": "multipart/form-data",
         },
       });
+      setLoading(false);
       if (res.status == 200) {
         // toast message
         notifyBlogCreation();
@@ -92,12 +97,14 @@ function NewPostPage() {
       }
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
   // on submit function(draft blog)
   const submitDraft = async (data, e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("token");
     // creating new formData and appending the required datas
     const formData = new FormData();
@@ -108,13 +115,15 @@ function NewPostPage() {
       formData.append("tags[]", tag); // Append each element of the array with the same key
     });
     try {
+      setLoadingDraftSub(true);
       // sending data to the backend
       const res = await axios.post(`${BASE_URL}/user/new-draft`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`, // Including  token
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
+      setLoadingDraftSub(false);
       if (res.status == 200) {
         // toast message
         notifyBlogDraftCreation();
@@ -125,6 +134,7 @@ function NewPostPage() {
       }
     } catch (err) {
       console.log(err);
+      setLoadingDraftSub(false);
     }
   };
 
@@ -153,20 +163,25 @@ function NewPostPage() {
           {/* save draft button */}
           <button
             type="submit"
-            onClick={handleSubmit((data, e) => tags.length !== 0 ? submitDraft(data, e):notifyTagErr())}
-            className=" mx-3 rounded-full text-white px-3  bg-red-500  hover:bg-red-600 text-sm w-auto h-[35px]"
+            onClick={handleSubmit((data, e) =>
+              tags.length !== 0 ? submitDraft(data, e) : notifyTagErr()
+            )}
+            className="mx-1 rounded-full text-white px-3 py-2  bg-red-500  hover:bg-red-600 text-sm "
           >
-            Save draft
+            {loadingDraftSub ? <Loader /> : "Save Draft"}
           </button>
           {/* publish button */}
           <button
             type="submit"
-            onClick={handleSubmit((data, e) =>tags.length!==0 ? onSubmit(data, e):notifyTagErr())}
+            onClick={handleSubmit((data, e) =>
+              tags.length !== 0 ? onSubmit(data, e) : notifyTagErr()
+            )}
             disabled={formState.isSubmitting}
-            className="mx-3 rounded-full text-white px-3 bg-black hover:bg-[#262626] text-sm w-auto h-[35px]"
+            className="mx-1 rounded-full text-white px-3 py-2 bg-black hover:bg-[#262626] text-sm "
           >
-            publish
+            {loading ? <Loader /> : "publish"}
           </button>
+         
         </div>
         {/* toast container */}
         <ToastContainer
@@ -304,6 +319,7 @@ function NewPostPage() {
           >
             publish
           </button>
+         
         </div>
       </div>
     </div>

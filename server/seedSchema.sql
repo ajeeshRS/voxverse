@@ -10,12 +10,13 @@
 --     image_destination character varying(255),
 --     draft boolean DEFAULT true,
 --     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+--     email character varying(255)
 -- );
 
 -- CREATE TABLE IF NOT EXISTS blogs (
 --     id SERIAL PRIMARY KEY,
 --     user_id character varying(255) NOT NULL,
---     title character varying(255) NOT NULL,cd
+--     title character varying(255) NOT NULL,
 --     content character varying(100000) NOT NULL,
 --     tags text[] DEFAULT '{}'::text[],
 --     image_filename character varying(255),

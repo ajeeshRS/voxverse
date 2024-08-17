@@ -30,7 +30,7 @@ function OtherArticles() {
             >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                src={`${BASE_URL}/uploads/${data.image_filename}`}
+                src={data.image_path}
                 alt="featured-image"
               />
 

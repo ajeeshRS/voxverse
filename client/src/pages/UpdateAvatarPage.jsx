@@ -6,13 +6,15 @@ import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
 import { notifyErrUpdateAvatar, notifyUpdateAvatar } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
+import Loader from "../components/Loader";
 
 function UpdateAvatarPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [imgData, setImgData] = useState(null);
-  
+  const [loading, setLoading] = useState(false);
+
   // state for user existence
   const user = useSelector((state) => state.userState.user);
 
@@ -27,9 +29,7 @@ function UpdateAvatarPage() {
   }
 
   // if a user selected a image preview that  else the user has an avatar preview that
-  const imagePath = imageSrc
-    ? imageSrc
-    : user.avatar && `${BASE_URL}/uploads/${user.avatar}`;
+  const imagePath = imageSrc ? imageSrc : user.avatar && user.avatar;
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
@@ -47,27 +47,29 @@ function UpdateAvatarPage() {
       reader.readAsDataURL(selectedFile);
     }
   };
-  
+
   const handleUpdateAvatar = async () => {
     try {
       const token = localStorage.getItem("token");
       const formData = new FormData();
       formData.append("image", imgData);
 
+      setLoading(true);
       const response = await axios.post(
         `${BASE_URL}/user/update-avatar`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Including  token
-            "Content-Type": "multipart/form-data",//multer will only work for this type of content
+            "Content-Type": "multipart/form-data", //multer will only work for this type of content
           },
         }
       );
-
+      setLoading(false);
       notifyUpdateAvatar();
     } catch (error) {
-      notifyErrUpdateAvatar()
+      setLoading(false);
+      notifyErrUpdateAvatar();
       console.log(error);
     }
   };
@@ -109,23 +111,23 @@ function UpdateAvatarPage() {
             style={{ display: "none" }}
           />
           <button
-            className=" w-full font-poppins font-semibold  mt-5 px-2 py-2 bg-black text-white rounded-md hover:bg-white hover:text-black border-2 hover:border-black transition-all duration-400"
+            className=" w-full font-poppins font-semibold  mt-5 px-2 py-2 flex items-center justify-center bg-black text-white rounded-md hover:bg-white hover:text-black border-2 hover:border-black transition-all duration-400"
             onClick={() => handleUpdateAvatar(imgData)}
           >
-            Update
+            {loading ? <Loader /> : "Update"}
           </button>
           {/* toast container */}
           <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={true}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              theme="light"
-            />
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="light"
+          />
         </div>
       </div>
     </div>

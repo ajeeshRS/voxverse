@@ -28,16 +28,12 @@ function NavBar() {
   // state for left hamburger button
   const isClicked = useSelector((state) => state.toggleMenu.value);
 
-  // state for user existence
   const user = useSelector((state) => state.userState.user);
 
-  // dispatch function to make changes to redux states
   const dispatch = useDispatch();
 
-  // react router dom function to navigate between pages
   const navigate = useNavigate();
 
-  // function to fetch user
   const fetchUser = async () => {
     try {
       // Fetch user with token
@@ -50,7 +46,7 @@ function NavBar() {
       console.log("Error fetching user with token:", error);
     }
   };
-  // setting the user name to a variable
+
   const userName = user.username;
 
   let userNameArray;
@@ -81,10 +77,8 @@ function NavBar() {
     };
   }, []);
 
-  // fetch user on component mount
   useEffect(() => {
     fetchUser();
-    // console.log(user)
   }, []);
 
   return (
@@ -139,7 +133,7 @@ function NavBar() {
                   >
                     {user.avatar ? (
                       <img
-                        src={`${BASE_URL}/uploads/${user.avatar}`}
+                        src={user.avatar}
                         alt="image-preview"
                         className="w-full h-full object-cover rounded-full "
                       />

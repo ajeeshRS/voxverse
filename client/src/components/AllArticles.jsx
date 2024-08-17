@@ -7,21 +7,16 @@ import { setAllBlogs } from "../state/slices/AllBlogSlice";
 import { formatDate } from "../helpers/userHelpers";
 import { useNavigate } from "react-router";
 function AllArticles() {
-  // getting the blogdata from the redux store that is retrieved from backend
+
   const allBlogs = useSelector((state) => state.allBlogState.allBlogs);
 
-  // dispatch to make changes to the redux state
   const dispatch = useDispatch();
 
-  // navigate function provided by react router dom for navigating between pages
   const navigate = useNavigate();
 
-  // function to fetch all blogs from the backend
   const fetchAllArticles = async () => {
     try {
-      // using axios to talk with backend
       const response = await axios.get(`${BASE_URL}/user/get/all-blogs`);
-      // setting the state using the dispatch
       dispatch(setAllBlogs(response.data));
     } catch (error) {
       console.log(error);
@@ -54,7 +49,7 @@ function AllArticles() {
               >
                 <img
                   className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                  src={`${BASE_URL}/uploads/${data.image_filename}`}
+                  src={data.image_path}
                   alt=""
                 />
 

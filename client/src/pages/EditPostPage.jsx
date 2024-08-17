@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
-import {
-  notifyBlogUpdation,
-} from "../helpers/toastify";
+import { notifyBlogUpdation } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
 import backicon from "../assets/back.svg";
 import { useLocation, useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 function EditPostPage() {
   const { register, handleSubmit, formState, reset, setValue } = useForm();
@@ -17,11 +16,9 @@ function EditPostPage() {
 
   console.log(article);
 
-  // tags
   const [tags, setTags] = useState([]);
-
-  // tag input handle state
   const [tagInput, setTagInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // To handle tag input change
   const handleTagInputChange = (e) => {
@@ -39,7 +36,6 @@ function EditPostPage() {
     }
   };
 
-  // To handle tag removal
   const handleRemoveTag = (tagToRemove, e) => {
     e.preventDefault();
     setTags(tags.filter((tag) => tag !== tagToRemove));
@@ -59,7 +55,7 @@ function EditPostPage() {
       tags.forEach((tag) => {
         formData.append("tags[]", tag); // Append each element of the array with the same key
       });
-
+      setLoading(true);
       const res = await axios.put(
         `${BASE_URL}/user/update-blog/${article[0].id}`,
         formData,
@@ -70,6 +66,7 @@ function EditPostPage() {
           },
         }
       );
+      setLoading(false);
       if (res.status == 200) {
         // toast message
         notifyBlogUpdation(res.data);
@@ -82,6 +79,7 @@ function EditPostPage() {
       }
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -113,9 +111,11 @@ function EditPostPage() {
             type="submit"
             onClick={handleSubmit((data, e) => handleUpdate(data, e))}
             disabled={formState.isSubmitting}
-            className="mx-3 rounded-full text-white px-3 bg-black hover:bg-[#262626] text-sm w-auto h-[35px]"
+            className="mx-1 rounded-full text-white px-3 py-2 bg-black hover:bg-[#262626] text-sm "
           >
-            Update
+            {
+              loading ? <Loader/> : 'Update'
+            }
           </button>
         </div>
         {/* toast container */}
@@ -238,7 +238,7 @@ function EditPostPage() {
         {/* for mobile screen */}
         <div className="block sm:hidden w-full text-center mt-14 ">
           {/* save draft button */}
-          
+
           {/* pubilsh button */}
           <button
             type="submit"

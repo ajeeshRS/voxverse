@@ -13,18 +13,16 @@ import {
   notifyRemoveFromBookmarks,
 } from "../helpers/toastify";
 import { ToastContainer } from "react-toastify";
+import Loader from "./Loader";
 
 function ViewArticleCom() {
-  // getting user info
   const user = useSelector((state) => state.userState.user);
 
   // Extracting id from the url using the useParams() hook
   const { id } = useParams();
 
-  // state for isbookmarked
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  // state for loading state
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -35,7 +33,6 @@ function ViewArticleCom() {
   // filtering the blog with the id from the url to display the individual blog
   const blog = blogData.filter((obj) => obj.id == id);
 
-  // add to bookmarks
   const addToBookmarks = async (id) => {
     try {
       const res = await axios.post(
@@ -53,7 +50,7 @@ function ViewArticleCom() {
       console.log(error);
     }
   };
-  // Remove from bookmarks
+
   const removeFromBookmarks = async (id) => {
     try {
       const res = await axios.delete(`${BASE_URL}/user/bookmark/delete/${id}`, {
@@ -80,7 +77,6 @@ function ViewArticleCom() {
     }
   };
 
-  // Use isBookmarked state to determine which icon to display
   const bookmarkIcon = isBookmarked ? removeIcon : addIcon;
 
   // Use toggleAdd state to toggle bookmark status
@@ -94,7 +90,6 @@ function ViewArticleCom() {
     }
   };
 
-  // for setting loading false when data is loaded
   useEffect(() => {
     if (blogData.length > 0) {
       setLoading(false);
@@ -132,7 +127,6 @@ function ViewArticleCom() {
     checkBookmark();
   }, [id]);
 
-  // Scroll to the top of the page when component mounts or content changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -141,16 +135,14 @@ function ViewArticleCom() {
     <>
       {/* if the loading is true display the spinner animation */}
       {loading ? (
-        <div className="pt-32">
-          <div className="flex justify-center items-center h-screen">
-            <div className="spinner border-t-4 border-b-4 border-gray-900 rounded-full w-12 h-12 animate-spin"></div>
-          </div>
+        <div className="flex w-[95vw] h-[50vh] justify-center items-center ">
+          <Loader />
         </div>
       ) : // if the blog's length is >0 then map the array and display the details
       blog.length > 0 ? (
         blog.map((data, index) => (
           <div key={index} className="pt-32 flex">
-            <div className="wrapper flex flex-col items-center">
+            <div className="wrapper w-full flex flex-col items-center">
               <div className="sm:w-2/4 w-full px-6 sm:px-0">
                 {/* title */}
                 <h1 className="font-montserrat text-2xl font-bold ">
@@ -160,8 +152,8 @@ function ViewArticleCom() {
               {/* image */}
               <div className="py-5">
                 <img
-                  className="sm:w-[550px] sm:h-[250px]"
-                  src={`${BASE_URL}/uploads/${data.image_filename}`}
+                  className="sm:w-[550px] sm:h-[250px] object-cover"
+                  src={data.image_path}
                   alt=""
                 />
               </div>

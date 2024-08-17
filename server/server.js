@@ -9,20 +9,19 @@ const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middlewares/errorHandler");
-const path = require("path")
-const fs = require('fs')
+const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 require("./config/passport-setup");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-const url = process.env.CLIENT_URL
+const url = process.env.CLIENT_URL;
 // cors middleware options
 app.use(
   cors({
-    origin:url,
+    origin: url,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
@@ -57,7 +56,7 @@ app.use("/auth", authRoutes);
 // connect to database
 pool.connect((err) => {
   if (err) {
-    console.log("Some error occured during connection!",err);
+    console.log("Some error occured during connection!", err);
   } else {
     console.log("Connected to postgresql ");
   }
@@ -74,5 +73,6 @@ app.listen(port, () => {
   //     console.log("Seeding Completed!");
   //   }
   // });
+
   console.log(`Server running on port : ${port}`);
 });

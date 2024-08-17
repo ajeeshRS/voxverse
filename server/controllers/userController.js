@@ -4,8 +4,10 @@ const asyncHandler = require("express-async-handler");
 const {
   checkEmailExistence,
   sendFeedbackMail,
+  publicIdExtractor,
 } = require("../helpers/userUtils");
 const jwt = require("jsonwebtoken");
+const { uploader, deleteFile } = require("../helpers/cloudinaryHelpers");
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
@@ -112,6 +114,12 @@ const newBlog = asyncHandler(async (req, res) => {
     // getting the user from the req.user
     const user = req.user;
 
+    const result = await uploader(image.path);
+
+    if (!result) {
+      return res.status(400).json("Image upload failed");
+    }
+
     // console.log(user);
     const query =
       "INSERT INTO blogs (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)";
@@ -122,11 +130,11 @@ const newBlog = asyncHandler(async (req, res) => {
       content,
       tags,
       image.filename,
-      image.path,
+      result.secure_url,
       image.destination,
       user.email,
     ]);
-
+    console.log(data);
     // if it return any rows then the blog is added
     if (data.rowCount > 0) {
       res.status(200).json("Blog added");
@@ -149,6 +157,12 @@ const newDraft = asyncHandler(async (req, res) => {
     // getting user form the req.user
     const user = req.user;
 
+    const result = await uploader(image.path);
+
+    if (!result) {
+      return res.status(400).json("Image upload failed");
+    }
+
     // console.log(user);
     const query =
       "INSERT INTO blog_drafts (user_id,title,content,tags,image_filename,image_path,image_destination,email) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)";
@@ -159,7 +173,7 @@ const newDraft = asyncHandler(async (req, res) => {
       content,
       tags,
       image.filename,
-      image.path,
+      result.secure_url,
       image.destination,
       user.email,
     ]);
@@ -276,6 +290,16 @@ const deleteDraftById = asyncHandler(async (req, res) => {
     // extracting id from the request params
     const id = req.params.id;
     console.log(id);
+
+    const blog = await pool.query(
+      "SELECT image_path FROM blog_drafts WHERE id = $1",
+      [id]
+    );
+
+    const publicId = publicIdExtractor(blog.rows[0].image_path);
+
+    await deleteFile(publicId);
+
     // query
     const query = `DELETE FROM blog_drafts WHERE id = $1`;
     // performing query
@@ -297,6 +321,13 @@ const deleteStoryById = asyncHandler(async (req, res) => {
     // extracting id from the request params
     const id = req.params.id;
     console.log(id);
+
+    const blog = await pool.query("SELECT * FROM blogs WHERE id = $1", [id]);
+
+    const publicId = publicIdExtractor(blog.rows[0].image_path);
+
+    await deleteFile(publicId);
+
     // query
     const query = `DELETE FROM blogs WHERE id = $1`;
 
@@ -321,6 +352,12 @@ const updateBlogs = asyncHandler(async (req, res) => {
     const { title, content, tags } = req.body;
     const image = req.file;
 
+    const result = await uploader(image.path);
+
+    if (!result) {
+      return res.status(400).json("Image upload failed");
+    }
+
     const query =
       "UPDATE blogs SET title=$1,content=$2,tags=$3,image_filename=$4,image_path=$5,image_destination=$6 WHERE id = $7";
     // Updating  blog
@@ -329,7 +366,7 @@ const updateBlogs = asyncHandler(async (req, res) => {
       content,
       tags,
       image.filename,
-      image.path,
+      result.secure_url,
       image.destination,
       id,
     ]);
@@ -377,14 +414,14 @@ const addBookmark = asyncHandler(async (req, res) => {
 const removeFromBookmarks = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    const {email} = req.user;
+    const { email } = req.user;
     const query = "SELECT * FROM Bookmark WHERE BlogID=$1 AND userid =$2";
     // getting the blog with id
-    const exist = await pool.query(query, [id,email]);
+    const exist = await pool.query(query, [id, email]);
     if (exist.rowCount) {
       const query1 = "DELETE FROM Bookmark WHERE BlogID=$1 AND UserID=$2";
       // if it exist remove from db
-      const data = await pool.query(query1, [id,email]);
+      const data = await pool.query(query1, [id, email]);
       // if it return any row respond with status code and message
       if (data.rowCount > 0) {
         res.status(200).json("Removed from bookmarks");
@@ -489,9 +526,12 @@ const updateAvatar = asyncHandler(async (req, res) => {
     const image = req.file;
     const { email } = req.user;
 
+    const result = await uploader(image.path);
+
     const query = "UPDATE users SET avatar=$1 WHERE email=$2";
+    
     // performing query
-    const data = await pool.query(query, [image.filename, email]);
+    const data = await pool.query(query, [result.secure_url, email]);
     // if it returns any row respond with message
     if (data.rowCount > 0) {
       res.status(200).json("Avatar updated");

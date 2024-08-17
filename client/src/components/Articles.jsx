@@ -14,6 +14,7 @@ function Articles() {
   const navigate = useNavigate();
   // extracting the first blog for the large card in the layout
   const extractedEl = blogData[0];
+  console.log(extractedEl);
 
   // removing the extracted blog for the remaining 2 elements
   const remainingEl = blogData.slice(1);
@@ -48,7 +49,7 @@ function Articles() {
             <div className="card bg-white rounded-md h-full  my-20  mx-5 mr-5 w-full sm:flex flex-col shadow-md  hidden">
               <img
                 className="w-full h-2/4 object-cover rounded-tl-md rounded-tr-md"
-                src={`${BASE_URL}/uploads/${extractedEl.image_filename}`}
+                src={extractedEl.image_path}
                 alt=""
               />
               <div className="w-auto h-2/4  rounded-bl-md rounded-br-md  ">
@@ -82,7 +83,7 @@ function Articles() {
             <div className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 ">
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                src={`${BASE_URL}/uploads/${extractedEl.image_filename}`}
+                src={extractedEl.image_path}
                 alt=""
               />
               <div className="flex flex-col">
@@ -119,7 +120,7 @@ function Articles() {
             >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
-                src={`${BASE_URL}/uploads/${data.image_filename}`}
+                src={data.image_path}
                 alt=""
               />
 

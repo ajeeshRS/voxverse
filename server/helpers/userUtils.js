@@ -102,9 +102,16 @@ const sendFeedbackMail = (message) => {
   }
 };
 
+const publicIdExtractor = (url) => {
+  const publicIdWithExtn = url.split("/").pop();
+  const publicId = publicIdWithExtn.split(".")[0];
+  return publicId;
+};
+
 module.exports = {
   checkEmailExistence,
   generateOtp,
   sendEmail,
   sendFeedbackMail,
+  publicIdExtractor
 };

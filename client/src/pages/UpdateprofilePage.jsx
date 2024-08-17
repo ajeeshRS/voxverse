@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import arrowLeftIcon from "../assets/Arrowleft.svg";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
@@ -10,13 +10,16 @@ import {
   notifyErrUpdateProfile,
   notifyUpdateProfile,
 } from "../helpers/toastify";
+import Loader from "../components/Loader";
 
 function UpdateprofilePage() {
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm();
+  const [loading, setLoading] = useState(false);
 
   const handleUpdateData = async (data) => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `${BASE_URL}/user/update-profile`,
         data,
@@ -24,9 +27,11 @@ function UpdateprofilePage() {
           headers: getHeaders(), //including header with token
         }
       );
+      setLoading(false);
       reset();
       notifyUpdateProfile();
     } catch (error) {
+      setLoading(false);
       notifyErrUpdateProfile();
       console.log(error);
     }
@@ -82,9 +87,9 @@ function UpdateprofilePage() {
           {/* update button */}
           <button
             type="submit"
-            className="md:w-[350px] h-10 mt-6 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
+            className="md:w-[350px] h-10 mt-6 flex justify-center items-center rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
           >
-            Update Profile
+            {loading ? <Loader /> : "Update Profile"}
           </button>
           {/* Toast message container */}
           <ToastContainer
