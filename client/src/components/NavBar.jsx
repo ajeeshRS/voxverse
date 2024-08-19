@@ -209,7 +209,7 @@ function NavBar() {
             }}
           >
             <img src={fileIcon} alt="article-logo" className="pr-5  " />
-            <Link to="/articles">Articles</Link>
+            <Link to="/articles" className="text-xl">Articles</Link>
           </li>
 
           {Object.keys(user).length !== 0 ? (
@@ -221,7 +221,7 @@ function NavBar() {
                 }}
               >
                 <img src={fileIcon} alt="my-story-logo" className="pr-5  " />
-                <Link to="/my-stories">My Stories</Link>
+                <Link to="/my-stories" className="text-xl">My Stories</Link>
               </li>
               <li
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
@@ -230,13 +230,13 @@ function NavBar() {
                 }}
               >
                 <img src={writeIcon} alt="write-logo" className="pr-5" />
-                <Link to="/new-post">Write</Link>
+                <Link to="/new-post" className="text-xl">Write</Link>
               </li>
             </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={userAddIcon} alt="user-add-logo" className="pr-5" />
-              <Link to="/signup">Be a writer</Link>
+              <Link to="/signup" className="text-xl">Be a writer</Link>
             </li>
           )}
 
@@ -249,7 +249,7 @@ function NavBar() {
                 }}
               >
                 <img src={bookmarkIcon} alt="bookmark-logo" className="pr-5 " />
-                <Link to="/bookmarks">Bookmarks</Link>
+                <Link to="/bookmarks" className="text-xl">Bookmarks</Link>
               </li>
               <li
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
@@ -258,7 +258,7 @@ function NavBar() {
                 }}
               >
                 <img src={userIcon} alt="profile-logo" className="pr-5 " />
-                <Link to="/profile">Profile</Link>
+                <Link to="/profile" className="text-xl">Profile</Link>
               </li>
               <li
                 onClick={() => {
@@ -269,13 +269,13 @@ function NavBar() {
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
               >
                 <img src={logoutIcon} alt="logout-logo" className="pr-5" />
-                <Link to="/login">Log out</Link>
+                <Link to="/login" className="text-xl">Log out</Link>
               </li>
             </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={loginIcon} alt="login-logo" className="pr-5" />
-              <Link to="/login">Log in</Link>
+              <Link to="/login" className="text-xl">Log in</Link>
             </li>
           )}
         </div>
