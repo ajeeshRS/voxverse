@@ -199,7 +199,7 @@ function NavBar() {
       {/* left side hamburger menu */}
       {isClicked && (
         <div
-          className={`md:hidden fixed inset-y-0 z-10 flex flex-col items-start bg-white w-[80%] px-4 py-6 space-y-4 mt-20 shadow-md `}
+          className={`md:hidden  fixed inset-y-0 z-10 flex flex-col items-start bg-white w-[80%] px-4 py-6 space-y-4 mt-20 shadow-md duration-200 transition ease-in-out`}
         >
           <li
             className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"

@@ -58,7 +58,7 @@ function AllArticles() {
                     {data.tags[0]}
                   </p>
                   <p
-                    className="px-4 py-1 font-montserrat font-bold sm:text-xl text-sm max-h-24 overflow-hidden hover:underline cursor-pointer"
+                    className="px-4 py-1 font-montserrat font-bold sm:text-xl text-sm  max-h-16 overflow-hidden hover:underline cursor-pointer"
                     onClick={() =>
                       navigate(
                         `/articles/${encodeURIComponent(data.title)}/${data.id}`

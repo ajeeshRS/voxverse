@@ -67,13 +67,13 @@ function NewPassword() {
   };
 
   return (
-    <div className="bg-[#F5F9E9] w-full h-[100vh] flex justify-center items-center">
+    <div className="bg-[#F3F7FA] w-full h-[100vh] flex justify-center items-center">
       <div
-        className="bg-white shadow-lg w-3/4 md:w-2/4  md:h-[80%] h-[65%] pb-20
-        rounded-lg flex flex-col justify-center items-center  "
+        className="bg-white shadow-lg w-5/6 md:w-2/4 h-fit  p-10
+        rounded-xl flex flex-col justify-center items-center  "
       >
         {/* Title */}
-        <h2 className="text-[#36453B] text-xl font-bold  font-josefin pt-7">
+        <h2 className="text-[#36453B] text-3xl font-bold  font-josefin">
           VoxVerse
         </h2>
         {/* Forgot text */}

@@ -1,5 +1,5 @@
 import React from "react";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { formatDate, getRandomElements } from "../helpers/userHelpers";
 import { BASE_URL } from "../helpers/urls";
@@ -34,12 +34,12 @@ function OtherArticles() {
                 alt="featured-image"
               />
 
-              <div className="flex flex-col">
-                <p className=" text-black w-20   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
+              <div className="flex flex-col justify-between">
+                <p className=" text-black w-20  rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
                   {data.tags[0]}
                 </p>
                 <p
-                  className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm max-h-28 overflow-hidden hover:underline cursor-pointer"
+                  className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm md:max-h-28 max-h-16 overflow-hidden hover:underline cursor-pointer"
                   // using encodeURIComponent to avoid the error caused by special characters in the url
                   onClick={() =>
                     navigate(
@@ -49,7 +49,7 @@ function OtherArticles() {
                 >
                   {data.title}
                 </p>
-                <div className="absolute bottom-2 px-4 flex justify-start sm:py-5 py-1 font-poppins text-xs ">
+                <div className="px-4 flex justify-start sm:py-5 py-3 font-poppins text-xs ">
                   <p className="sm:block hidden">{data.user_id}</p>
                   <span className="px-1 sm:block hidden">&#x2022;</span>
                   <p>{formatDate(data.created_at)}</p>

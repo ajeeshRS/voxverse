@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
 import { useDispatch, useSelector } from "react-redux";
 import { setBlog } from "../state/slices/BlogSlice";
 import { formatDate } from "../helpers/userHelpers";
 import { useNavigate } from "react-router";
+import Loader from "./Loader";
+import {motion} from "framer-motion"
 
 function Articles() {
   // getting the blog state value
   const blogData = useSelector((state) => state.blogState.blogs);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   // extracting the first blog for the large card in the layout
@@ -22,11 +25,14 @@ function Articles() {
   // fetching the latest 3 blogs for this fixed layout
   const fetchBlogs = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${BASE_URL}/user/get/latest-blogs`);
       // setting the blog data from the response using dispatch function
       dispatch(setBlog(response.data));
+      setLoading(false);
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -35,10 +41,18 @@ function Articles() {
     fetchBlogs();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="w-full h-[50vh] flex justify-center items-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <>
       <div id="start-reading">
-        <p className="w-full sm:pl-10 pl-5 font-sans font-bold pt-24 text-3xl bg-white">
+        <p className="w-full sm:pl-10 pl-5 font-sans font-bold pt-24 text-3xl">
           Latest posts
         </p>
       </div>
@@ -46,7 +60,10 @@ function Articles() {
         {/* if extractedEl is there display the details */}
         {extractedEl && (
           <div className="left flex justify-center items-center sm:w-2/4 w-full  sm:h-3/4 sm:mb-20  ">
-            <div className="card bg-white rounded-md h-full  my-20  mx-5 mr-5 w-full sm:flex flex-col shadow-md  hidden">
+            <motion.div
+            whileFocus={{scale:1.05}}
+           transition={{duration:.5,ease:'easeInOut'}}
+             className="card bg-white rounded-md h-full  my-20  mx-5 mr-5 w-full sm:flex flex-col shadow-md  hidden">
               <img
                 className="w-full h-2/4 object-cover rounded-tl-md rounded-tr-md"
                 src={extractedEl.image_path}
@@ -79,19 +96,19 @@ function Articles() {
                   <p>{formatDate(extractedEl.created_at)}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
             <div className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 ">
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
                 src={extractedEl.image_path}
                 alt=""
               />
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-between">
                 <p className=" text-black w-20   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
                   {extractedEl.tags[0]}
                 </p>
                 <p
-                  className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm cursor-pointer hover:underline"
+                  className="px-4 py-2 font-montserrat max-h-16 overflow-hidden font-bold sm:text-xl text-sm cursor-pointer hover:underline"
                   onClick={() =>
                     navigate(
                       `/articles/${encodeURIComponent(extractedEl.title)}/${
@@ -102,7 +119,7 @@ function Articles() {
                 >
                   {extractedEl.title}
                 </p>
-                <div className="w-full px-4 flex justify-start sm:py-10 py-1 font-poppins sm:text-sm text-xs">
+                <div className="w-full px-4 flex justify-start sm:py-10 py-2 font-poppins sm:text-sm text-xs">
                   <p className="sm:block hidden">{extractedEl.user_id}</p>
                   <span className="px-1 sm:block hidden">&#x2022;</span>
                   <p>{formatDate(extractedEl.created_at)}</p>
@@ -124,8 +141,8 @@ function Articles() {
                 alt=""
               />
 
-              <div className="flex flex-col">
-                <p className=" text-black w-24   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
+              <div className="flex flex-col justify-between py-3">
+                <p className=" text-black w-24  rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
                   {data.tags[0]}
                 </p>
                 <p

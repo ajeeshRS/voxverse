@@ -133,7 +133,7 @@ function BookmarkPage() {
                     )}
                   </div>
                   <p
-                    className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm max-h-28 overflow-hidden hover:underline cursor-pointer"
+                    className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm md:max-h-28 max-h-16 overflow-hidden hover:underline cursor-pointer"
                     // using encodeURIComponent to avoid the error caused by special characters in the url
                     onClick={() =>
                       navigate(

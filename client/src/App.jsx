@@ -74,8 +74,8 @@ function App() {
       <Route path="/forgot-password" element={<PasswordResetPage />} />
       {isOtpSent && (
         <>
-          <Route path="/verify-otp" element={<VerifyOtpPage />} />
-          <Route path="/reset-password" element={<NewPasswordPage />} />
+        <Route path="/verify-otp" element={<VerifyOtpPage />} />
+        <Route path="/reset-password" element={<NewPasswordPage />} />
         </>
       )}
 

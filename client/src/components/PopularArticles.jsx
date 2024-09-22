@@ -14,12 +14,12 @@ function PopularArticles() {
   const popularArticles = getRandomElements(allBlogs, 8);
 
   return (
-    <div className="w-full h-auto pb-10 bg-[#F5F9E9] pt-5">
-      <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl bg-[#F5F9E9]">
+    <div className="w-ful pb-10 bg-gradient-to-b from-slate-100 to-[#fff] pt-5">
+      <p className="w-full sm:pl-10 pl-5 font-sans font-bold  text-3xl">
         Popular articles
       </p>
-      <div className=" w-full h-full flex sm:px-10 px-5  pt-10">
-        <div class="w-full grid sm:grid-cols-4 grid-cols-1 gap-4 grid-rows-2 ">
+      <div className=" w-full flex sm:px-10 px-5  pt-10">
+        <div class="w-full h-fit grid md:grid-cols-4 grid-cols-1 gap-4">
           {/* if the articles are there then map and display the details */}
           {popularArticles ? (
             popularArticles.map((data, index) => (
@@ -28,7 +28,7 @@ function PopularArticles() {
                 className="relative wrapper w-full h-[200px] rounded-md shadow-md bg-white p-5    "
               >
                 <p
-                  className="font-montserrat text-lg font-bold max-h-16 overflow-hidden cursor-pointer hover:underline "
+                  className="font-montserrat text-lg font-bold max-h-14 overflow-hidden cursor-pointer hover:underline "
                   // using encodeURIComponent to avoid the error caused by special characters in the url
                   onClick={() =>
                     navigate(
