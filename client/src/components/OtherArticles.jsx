@@ -2,7 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { formatDate, getRandomElements } from "../helpers/userHelpers";
-import { BASE_URL } from "../helpers/urls";
+import { motion } from "framer-motion";
+
 function OtherArticles() {
   // getting the blogs from the redux state store
   const allBlogs = useSelector((state) => state.allBlogState.allBlogs);
@@ -24,9 +25,11 @@ function OtherArticles() {
         {/* if the articles are there then map and display the details */}
         {otherArticles ? (
           otherArticles.map((data, index) => (
-            <div
+            <motion.div
+              whileHover={{ translateY: -5 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               key={index}
-              className="relative bg-white h-[150px] sm:h-[180px] mt-2 w-full rounded-md shadow-md flex "
+              className="relative bg-white h-[150px] sm:h-[180px] mt-2 w-full rounded-md cursor-pointer shadow-md flex "
             >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
@@ -55,7 +58,7 @@ function OtherArticles() {
                   <p>{formatDate(data.created_at)}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))
         ) : (
           // if no articles where found then display the message

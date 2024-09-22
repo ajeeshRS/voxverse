@@ -3,6 +3,8 @@ import externalIcon from "../assets/External.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getRandomElements } from "../helpers/userHelpers";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 function PopularArticles() {
   // getting the blogs from the redux state store
   const allBlogs = useSelector((state) => state.allBlogState.allBlogs);
@@ -23,9 +25,11 @@ function PopularArticles() {
           {/* if the articles are there then map and display the details */}
           {popularArticles ? (
             popularArticles.map((data, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="relative wrapper w-full h-[200px] rounded-md shadow-md bg-white p-5    "
+                whileHover={{ translateY: -5 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="relative wrapper w-full h-[200px] rounded-md shadow-md bg-white p-5 cursor-pointer "
               >
                 <p
                   className="font-montserrat text-lg font-bold max-h-14 overflow-hidden cursor-pointer hover:underline "
@@ -54,7 +58,7 @@ function PopularArticles() {
                     <img src={externalIcon} alt="external-link icon" />
                   </a>
                 </p>
-              </div>
+              </motion.div>
             ))
           ) : (
             // if no articles where found then display the message

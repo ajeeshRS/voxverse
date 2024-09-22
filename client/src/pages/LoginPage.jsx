@@ -16,7 +16,7 @@ import { setUser } from "../state/slices/UserStateSlice";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   // Define validation schema using Zod
   const schema = z.object({
@@ -42,14 +42,16 @@ function LoginPage() {
       const response = await axios.post(`${BASE_URL}/user/login`, data);
       localStorage.setItem("token", response.data.accessToken);
 
-      const userResponse = await axios.get(`${BASE_URL}/user/get`,{headers:getHeaders()});
+      const userResponse = await axios.get(`${BASE_URL}/user/get`, {
+        headers: getHeaders(),
+      });
       dispatch(setUser(userResponse.data));
 
       navigate("/");
     } catch (err) {
       console.log(err);
-      if(err.response.status == 401){
-        notifyInvalidCredentials()
+      if (err.response.status == 401) {
+        notifyInvalidCredentials();
       }
     }
   };
@@ -124,6 +126,7 @@ function LoginPage() {
             >
               Log in
             </button>
+            
             <ToastContainer
               position="top-center"
               autoClose={3000}
@@ -136,6 +139,17 @@ function LoginPage() {
               theme="light"
             />
           </form>
+          <button
+              onClick={() =>
+                handleLogin({
+                  email: "testuser@example.com",
+                  password: "123456",
+                })
+              }
+              className="md:w-[350px] h-10 mt-3 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
+            >
+              Continue as Guest
+            </button>
           {/* Signup link */}
           <p className="text-gray-500 font-sans pt-4 md:text-md text-sm">
             Don&apos;t have an account yet?{" "}

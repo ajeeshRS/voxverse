@@ -6,7 +6,7 @@ import { setBlog } from "../state/slices/BlogSlice";
 import { formatDate } from "../helpers/userHelpers";
 import { useNavigate } from "react-router";
 import Loader from "./Loader";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 
 function Articles() {
   // getting the blog state value
@@ -61,9 +61,10 @@ function Articles() {
         {extractedEl && (
           <div className="left flex justify-center items-center sm:w-2/4 w-full  sm:h-3/4 sm:mb-20  ">
             <motion.div
-            whileFocus={{scale:1.05}}
-           transition={{duration:.5,ease:'easeInOut'}}
-             className="card bg-white rounded-md h-full  my-20  mx-5 mr-5 w-full sm:flex flex-col shadow-md  hidden">
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="card bg-white rounded-md h-full  my-20  mx-5 mr-5 w-full sm:flex flex-col shadow-md cursor-pointer  hidden"
+            >
               <img
                 className="w-full h-2/4 object-cover rounded-tl-md rounded-tr-md"
                 src={extractedEl.image_path}
@@ -97,7 +98,10 @@ function Articles() {
                 </div>
               </div>
             </motion.div>
-            <div className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 ">
+            <motion.div 
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 ">
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
                 src={extractedEl.image_path}
@@ -125,15 +129,17 @@ function Articles() {
                   <p>{formatDate(extractedEl.created_at)}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
         <div className="right flex  flex-col sm:w-2/4 w-full items-center justify-between sm:h-3/4 pl-5 sm:mb-20  ">
           {/* Displaying the remaining elements */}
           {remainingEl.map((data, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-white h-[150px] sm:h-[45%] mt-2 w-full rounded-md shadow-md flex "
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="bg-white h-[150px] sm:h-[45%] mt-2 w-full rounded-md shadow-md flex  cursor-pointer"
             >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
@@ -161,7 +167,7 @@ function Articles() {
                   <p>{formatDate(data.created_at)}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
