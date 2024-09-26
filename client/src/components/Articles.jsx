@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../helpers/urls";
 import { useDispatch, useSelector } from "react-redux";
-import { setBlog } from "../state/slices/BlogSlice";
+import BlogSlice, { setBlog } from "../state/slices/BlogSlice";
 import { formatDate } from "../helpers/userHelpers";
 import { useNavigate } from "react-router";
 import Loader from "./Loader";
@@ -15,32 +15,32 @@ function Articles() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  // extracting the first blog for the large card in the layout
-  const extractedEl = blogData[0];
-  console.log(extractedEl);
 
-  // removing the extracted blog for the remaining 2 elements
-  const remainingEl = blogData.slice(1);
-
-  // fetching the latest 3 blogs for this fixed layout
-  const fetchBlogs = async () => {
+   // fetching the latest 3 blogs for this fixed layout
+   const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/user/get/latest-blogs`);
       // setting the blog data from the response using dispatch function
       dispatch(setBlog(response.data));
-      setLoading(false);
     } catch (err) {
-      console.log(err);
+      console.error('Failed to fetch blogs', err);
+    } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch]);
 
-  // fetch blog on component mount
+  // fetch blogs on component mount
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]);
 
+  // extracting the first blog for the large card in the layout
+  const extractedEl = useMemo(() => blogData?.[0], [blogData]);
+
+  // removing the extracted blog for the remaining 2 elements
+  const remainingEl =useMemo(()=>blogData?.slice(1),[blogData]) 
+ 
   if (loading) {
     return (
       <div className="w-full h-[50vh] flex justify-center items-center">
@@ -98,10 +98,11 @@ function Articles() {
                 </div>
               </div>
             </motion.div>
-            <motion.div 
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 ">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="bg-white h-[150px] sm:h-[45%]  w-full rounded-md shadow-md flex sm:hidden ml-5 "
+            >
               <img
                 className="sm:w-[35%] w-[40%] h-full object-cover rounded-tl-md roun rounded-bl-md"
                 src={extractedEl.image_path}

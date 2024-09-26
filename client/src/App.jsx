@@ -4,7 +4,7 @@ import WelcomePage from "./pages/WelcomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BASE_URL } from "./helpers/urls";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,7 +57,7 @@ function App() {
 
         dispatch(setUser(googleResponse.data.user));
       } catch (error) {
-        console.log("Error fetching user with Google auth:", error);
+        // console.log("Error fetching user with Google auth:", error);
       }
     };
 

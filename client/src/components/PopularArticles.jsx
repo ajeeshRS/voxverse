@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import externalIcon from "../assets/External.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getRandomElements } from "../helpers/userHelpers";
@@ -13,7 +13,10 @@ function PopularArticles() {
   const navigate = useNavigate();
 
   // getting random 8 element to display
-  const popularArticles = getRandomElements(allBlogs, 8);
+  const popularArticles = useMemo(
+    () => getRandomElements(allBlogs, 8),
+    [allBlogs]
+  );
 
   return (
     <div className="w-ful pb-10 bg-gradient-to-b from-slate-100 to-[#fff] pt-5">
@@ -21,7 +24,7 @@ function PopularArticles() {
         Popular articles
       </p>
       <div className=" w-full flex sm:px-10 px-5  pt-10">
-        <div class="w-full h-fit grid md:grid-cols-4 grid-cols-1 gap-4">
+        <div className="w-full h-fit grid md:grid-cols-4 grid-cols-1 gap-4">
           {/* if the articles are there then map and display the details */}
           {popularArticles ? (
             popularArticles.map((data, index) => (

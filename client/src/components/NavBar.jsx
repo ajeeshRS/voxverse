@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import SearchSvg from "../assets/Search.svg";
 import Hamburger from "../assets/Sort.svg";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,6 +27,8 @@ import Search from "./Search";
 function NavBar() {
   // state for right menu button
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
@@ -29,35 +37,36 @@ function NavBar() {
   const isClicked = useSelector((state) => state.toggleMenu.value);
 
   const user = useSelector((state) => state.userState.user);
-
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
-  const fetchUser = async () => {
+  // Fetch user data
+  const fetchUser = useCallback(async () => {
+    if (user) return; // Don't fetch if user is already in the state
+    setLoading(true);
     try {
-      // Fetch user with token
       const tokenResponse = await axios.get(`${BASE_URL}/user/get`, {
         headers: getHeaders(),
       });
-      // console.log(tokenResponse.data)
       dispatch(setUser(tokenResponse.data));
+      localStorage.setItem("user", tokenResponse.data);
     } catch (error) {
-      console.log("Error fetching user with token:", error);
+      // console.error("Error fetching user with token:", error);
+      setError("Failed to fetch user data");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [dispatch]);
 
-  const userName = user.username;
+  // memoize username and first letter logic
+  const userFirstLetter = useMemo(() => {
+    if (user?.username) {
+      // console.log(user.username)
+      return user.username.charAt(0).toUpperCase();
+    }
+  }, [user]);
 
-  let userNameArray;
-  let userFirstLetter;
-  // if username is there then split and
-  //  get the first letter and make that letter uppercase
-  if (userName) {
-    userNameArray = userName.split("");
-    userFirstLetter = userNameArray[0].toUpperCase();
-  }
-
+  // Handle click outside of the menu
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -71,15 +80,20 @@ function NavBar() {
     }
 
     document.addEventListener("click", handleClickOutside);
-
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
+  // Fetch user on component mount
   useEffect(() => {
-    fetchUser();
-  }, []);
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser) {
+      fetchUser();
+    } else {
+      dispatch(setUser(storedUser));
+    }
+  }, [dispatch, fetchUser]);
 
   return (
     // Navbar
@@ -209,7 +223,9 @@ function NavBar() {
             }}
           >
             <img src={fileIcon} alt="article-logo" className="pr-5  " />
-            <Link to="/articles" className="text-xl">Articles</Link>
+            <Link to="/articles" className="text-xl">
+              Articles
+            </Link>
           </li>
 
           {Object.keys(user).length !== 0 ? (
@@ -221,7 +237,9 @@ function NavBar() {
                 }}
               >
                 <img src={fileIcon} alt="my-story-logo" className="pr-5  " />
-                <Link to="/my-stories" className="text-xl">My Stories</Link>
+                <Link to="/my-stories" className="text-xl">
+                  My Stories
+                </Link>
               </li>
               <li
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
@@ -230,13 +248,17 @@ function NavBar() {
                 }}
               >
                 <img src={writeIcon} alt="write-logo" className="pr-5" />
-                <Link to="/new-post" className="text-xl">Write</Link>
+                <Link to="/new-post" className="text-xl">
+                  Write
+                </Link>
               </li>
             </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={userAddIcon} alt="user-add-logo" className="pr-5" />
-              <Link to="/signup" className="text-xl">Be a writer</Link>
+              <Link to="/signup" className="text-xl">
+                Be a writer
+              </Link>
             </li>
           )}
 
@@ -249,7 +271,9 @@ function NavBar() {
                 }}
               >
                 <img src={bookmarkIcon} alt="bookmark-logo" className="pr-5 " />
-                <Link to="/bookmarks" className="text-xl">Bookmarks</Link>
+                <Link to="/bookmarks" className="text-xl">
+                  Bookmarks
+                </Link>
               </li>
               <li
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
@@ -258,7 +282,9 @@ function NavBar() {
                 }}
               >
                 <img src={userIcon} alt="profile-logo" className="pr-5 " />
-                <Link to="/profile" className="text-xl">Profile</Link>
+                <Link to="/profile" className="text-xl">
+                  Profile
+                </Link>
               </li>
               <li
                 onClick={() => {
@@ -269,13 +295,17 @@ function NavBar() {
                 className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1"
               >
                 <img src={logoutIcon} alt="logout-logo" className="pr-5" />
-                <Link to="/login" className="text-xl">Log out</Link>
+                <Link to="/login" className="text-xl">
+                  Log out
+                </Link>
               </li>
             </>
           ) : (
             <li className="py-2 w-full list-none text-black text-2xl hover:text-gray-300 font-montserrat font-semibold flex items-center px-1">
               <img src={loginIcon} alt="login-logo" className="pr-5" />
-              <Link to="/login" className="text-xl">Log in</Link>
+              <Link to="/login" className="text-xl">
+                Log in
+              </Link>
             </li>
           )}
         </div>

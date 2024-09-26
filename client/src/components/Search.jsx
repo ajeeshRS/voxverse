@@ -9,7 +9,7 @@ import axios from "axios";
 import { ToastContainer } from "react-toastify";
 
 function Search() {
-  const [searchInput, setSearchInput] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

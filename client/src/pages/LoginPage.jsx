@@ -41,10 +41,10 @@ function LoginPage() {
     try {
       const response = await axios.post(`${BASE_URL}/user/login`, data);
       localStorage.setItem("token", response.data.accessToken);
-
       const userResponse = await axios.get(`${BASE_URL}/user/get`, {
         headers: getHeaders(),
       });
+      localStorage.setItem("user", JSON.stringify(userResponse.data));
       dispatch(setUser(userResponse.data));
 
       navigate("/");
@@ -126,7 +126,7 @@ function LoginPage() {
             >
               Log in
             </button>
-            
+
             <ToastContainer
               position="top-center"
               autoClose={3000}
@@ -140,16 +140,16 @@ function LoginPage() {
             />
           </form>
           <button
-              onClick={() =>
-                handleLogin({
-                  email: "testuser@example.com",
-                  password: "123456",
-                })
-              }
-              className="md:w-[350px] h-10 mt-3 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
-            >
-              Continue as Guest
-            </button>
+            onClick={() =>
+              handleLogin({
+                email: "testuser@example.com",
+                password: "123456",
+              })
+            }
+            className="md:w-[350px] h-10 mt-3 rounded-lg bg-black text-white hover:bg-[#262626] transition duration-500 w-[240px] "
+          >
+            Continue as Guest
+          </button>
           {/* Signup link */}
           <p className="text-gray-500 font-sans pt-4 md:text-md text-sm">
             Don&apos;t have an account yet?{" "}
