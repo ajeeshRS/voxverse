@@ -16,15 +16,15 @@ function Articles() {
 
   const navigate = useNavigate();
 
-   // fetching the latest 3 blogs for this fixed layout
-   const fetchBlogs = useCallback(async () => {
+  // fetching the latest 3 blogs for this fixed layout
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}/user/get/latest-blogs`);
       // setting the blog data from the response using dispatch function
       dispatch(setBlog(response.data));
     } catch (err) {
-      console.error('Failed to fetch blogs', err);
+      console.error("Failed to fetch blogs", err);
     } finally {
       setLoading(false);
     }
@@ -39,8 +39,8 @@ function Articles() {
   const extractedEl = useMemo(() => blogData?.[0], [blogData]);
 
   // removing the extracted blog for the remaining 2 elements
-  const remainingEl =useMemo(()=>blogData?.slice(1),[blogData]) 
- 
+  const remainingEl = useMemo(() => blogData?.slice(1), [blogData]);
+
   if (loading) {
     return (
       <div className="w-full h-[50vh] flex justify-center items-center">
@@ -70,12 +70,12 @@ function Articles() {
                 src={extractedEl.image_path}
                 alt=""
               />
-              <div className="w-auto h-2/4  rounded-bl-md rounded-br-md  ">
-                <p className=" text-black w-24 pl-1   rounded-full mt-3 text-sm ml-4 h-6 flex items-center justify-center border-[1px] border-black">
+              <div className="w-auto h-2/4 flex flex-col justify-between rounded-bl-md rounded-br-md  ">
+                <p className=" text-neutral-700 w-24 pl-1  rounded-full mt-3 text-sm ml-4 h-6 flex items-center justify-center  bg-neutral-200">
                   {extractedEl.tags[0]}
                 </p>
                 <p
-                  className="px-4 py-1 font-montserrat font-bold text-xl cursor-pointer hover:underline"
+                  className="px-4 py-1 font-montserrat font-semibold text-xl cursor-pointer hover:underline"
                   onClick={() =>
                     // navigating to the page where individual blog is displayed
                     // using encodeURIComponent to avoid the error that caused by special characters in the url
@@ -88,10 +88,10 @@ function Articles() {
                 >
                   {extractedEl.title}
                 </p>
-                <p className=" font-roboto text-sm px-4 max-h-14 overflow-hidden sm:block hidden">
+                <p className="font-roboto text-xs px-4 max-h-14 overflow-hidden sm:block hidden">
                   {extractedEl.content}
                 </p>
-                <div className="px-4 flex justify-start py-6 font-poppins">
+                <div className="px-4 flex justify-start py-6 font-poppins text-xs">
                   <p>{extractedEl.user_id}</p>
                   <span className="px-1">&#x2022;</span>
                   <p>{formatDate(extractedEl.created_at)}</p>
@@ -109,11 +109,11 @@ function Articles() {
                 alt=""
               />
               <div className="flex flex-col justify-between">
-                <p className=" text-black w-20   rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
+                <p className=" text-neutral-700 w-24 pl-1  rounded-full mt-3 text-sm ml-4 h-6 flex items-center justify-center  bg-neutral-200">
                   {extractedEl.tags[0]}
                 </p>
                 <p
-                  className="px-4 py-2 font-montserrat max-h-16 overflow-hidden font-bold sm:text-xl text-sm cursor-pointer hover:underline"
+                  className="px-4 py-2 font-montserrat max-h-16 overflow-hidden font-semibold sm:text-xl text-sm cursor-pointer hover:underline"
                   onClick={() =>
                     navigate(
                       `/articles/${encodeURIComponent(extractedEl.title)}/${
@@ -148,12 +148,12 @@ function Articles() {
                 alt=""
               />
 
-              <div className="flex flex-col justify-between py-3">
-                <p className=" text-black w-24  rounded-full mt-3 text-sm ml-3 h-6 flex items-center justify-center border-[1px] border-black">
+              <div className="h-full w-full flex flex-col justify-between items-start md:space-y-2 space-y-1 py-3">
+                <p className=" text-neutral-700 w-24 pl-1  rounded-full mt-3 text-sm ml-4 h-6 flex items-center justify-center  bg-neutral-200">
                   {data.tags[0]}
                 </p>
                 <p
-                  className="px-4 py-2 font-montserrat font-bold sm:text-xl text-sm cursor-pointer hover:underline"
+                  className="px-4 font-montserrat font-semibold sm:text-xl text-sm cursor-pointer hover:underline"
                   onClick={() =>
                     navigate(
                       `/articles/${encodeURIComponent(data.title)}/${data.id}`
@@ -162,7 +162,10 @@ function Articles() {
                 >
                   {data.title}
                 </p>
-                <div className="px-4 flex justify-start sm:py-10 py-1 font-poppins text-xs ">
+                <p className="font-roboto bg-white text-xs px-4 max-w-full md:block hidden !line-clamp-3">
+                  {data.content}
+                </p>
+                <div className="px-4 flex justify-start py-2 items-end font-poppins text-xs">
                   <p className="sm:block hidden">{data.user_id}</p>
                   <span className="px-1 sm:block hidden">&#x2022;</span>
                   <p>{formatDate(data.created_at)}</p>

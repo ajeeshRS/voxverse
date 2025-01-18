@@ -97,7 +97,7 @@ function NavBar() {
 
   return (
     // Navbar
-    <nav className="w-full z-[10] bg-white h-20 shadow-md fixed">
+    <nav className="w-full z-[10] bg-white h-20 shadow-sm fixed">
       <div className="h-20 flex flex-row justify-between items-center">
         <div className="flex items-center justify-around md:w-[35%] w-24 h-20">
           <img
